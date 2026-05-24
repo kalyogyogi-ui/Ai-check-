@@ -30,7 +30,7 @@ Given the relatively young age of many PQC hardness assumptions compared to fact
 
 ### 4.1.5 Implementation Robustness
 
-An algorithm that is secure in theory but vulnerable to side-channel attacks in practice provides false assurance. PQC algorithms must be designed with implementation safety in mind. This includes amenability to constant-time implementation (avoiding secret-dependent branches and memory accesses), resistance to fault injection attacks, and tolerance of implementation errors. Some constructions, like the Fujisaki-Okeyama transform used in ML-KEM, provide IND-CCA2 security even if the underlying public-key encryption scheme only achieves weaker security — this provides defense-in-depth against certain implementation mistakes.
+An algorithm that is secure in theory but vulnerable to side-channel attacks in practice provides false assurance. PQC algorithms must be designed with implementation safety in mind. This includes amenability to constant-time implementation (avoiding secret-dependent branches and memory accesses), resistance to fault injection attacks, and tolerance of implementation errors. Some constructions, like the Fujisaki-Okamoto transform used in ML-KEM, provide IND-CCA2 security even if the underlying public-key encryption scheme only achieves weaker security — this provides defense-in-depth against certain implementation mistakes.
 
 ### 4.1.6 Algorithm Agility and Diversity
 
@@ -66,7 +66,7 @@ The security of these structured variants is a subject of ongoing research. Whil
 
 **Standardized Algorithms**
 
-- **ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism, FIPS 203):** Derived from the CRYSTALS-Kyber submission. ML-KEM provides IND-CCA2-secure key encapsulation using M-LWE. It operates by encrypting a random message under a lattice-based public-key encryption scheme, then applying the Fujisaki-Okeyama transform for CCA security. Available in three parameter sets: ML-KEM-512 (Level 1), ML-KEM-768 (Level 3), and ML-KEM-1024 (Level 5).
+- **ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism, FIPS 203):** Derived from the CRYSTALS-Kyber submission. ML-KEM provides IND-CCA2-secure key encapsulation using M-LWE. It operates by encrypting a random message under a lattice-based public-key encryption scheme, then applying the Fujisaki-Okamoto transform for CCA security. Available in three parameter sets: ML-KEM-512 (Level 1), ML-KEM-768 (Level 3), and ML-KEM-1024 (Level 5).
 - **ML-DSA (Module-Lattice-Based Digital Signature Algorithm, FIPS 204):** Derived from CRYSTALS-Dilithium. ML-DSA provides EUF-CMA-secure digital signatures using a Fiat-Shamir with Aborts approach based on M-LWE and M-SIS. The "aborts" technique is crucial: the signer rejects signatures that would leak information about the secret key, requiring multiple signing attempts on average. Available as ML-DSA-44 (Level 2), ML-DSA-65 (Level 3), and ML-DSA-87 (Level 5).
 
 **Strengths**
@@ -131,7 +131,7 @@ Hash-based signatures build complex structures from simple hash-based primitives
 
 **Standardized Algorithm**
 
-SLH-DSA (FIPS 205) provides stateless hash-based signatures with six parameter sets combining two hash function choices (SHA-256 and SHAKE256) with three security levels. Each level offers a "fast" variant (smaller signatures, slower signing) and a "small" variant (larger signatures, faster signing). At Level 1, SLH-DSA-SHA2-128f produces 17,088-byte signatures with public keys of 32 bytes and secret keys of 64 bytes.
+SLH-DSA (FIPS 205) provides stateless hash-based signatures with six parameter sets combining two hash function choices (SHA-256 and SHAKE256) with three security levels. Each level offers a "fast" variant (faster signing, larger signatures) and a "small" variant (smaller signatures, slower signing). At Level 1, SLH-DSA-SHA2-128f produces 17,088-byte signatures with public keys of 32 bytes and secret keys of 64 bytes.
 
 **Strengths**
 
@@ -185,7 +185,7 @@ An isogeny is a morphism (structure-preserving map) between elliptic curves that
 
 - **Supersingular Isogeny Problem:** Given two supersingular elliptic curves E_1 and E_2 over a finite field F_{p^2}, find an isogeny φ: E_1 → E_2. The set of supersingular curves forms a graph (the supersingular isogeny graph) where edges are isogenies of a fixed degree. This graph is a Ramanujan graph — an optimal expander — making path-finding problems on it potentially hard.
 - **Endomorphism Ring Problem:** Given a supersingular elliptic curve E, compute its endomorphism ring End(E). This problem is closely related to the isogeny problem and is believed to be of equivalent difficulty.
-- **Group Action Inverse Problem (for CSIDH):** CSIDH uses the action of the ideal class group of an imaginary quadratic order on a set of ordinary (or supersingular) elliptic curves over F_p. The hardness lies in inverting this group action.
+- **Group Action Inverse Problem (for CSIDH):** CSIDH uses the action of the ideal class group of an imaginary quadratic order on a set of supersingular elliptic curves over F_p. The hardness lies in inverting this group action.
 
 **The Rise and Fall of SIDH/SIKE**
 
@@ -286,7 +286,7 @@ NIST selected CRYSTALS-Kyber (now ML-KEM) as the primary KEM standard based on a
 
 **Strong security foundations:** Module-LWE benefits from extensive study within the lattice cryptography community. The worst-case to average-case connection (albeit weaker for structured variants) provides theoretical grounding. No significant attacks had been found through three rounds of intense public scrutiny.
 
-**Implementation quality:** The Kyber team produced clean, well-documented reference implementations with constant-time guarantees. The algorithm's structure — based on polynomial multiplication via NTT — maps well to both software and hardware implementations. The Fujisaki-Okeyama transform provides IND-CCA2 security with a simple and auditable construction.
+**Implementation quality:** The Kyber team produced clean, well-documented reference implementations with constant-time guarantees. The algorithm's structure — based on polynomial multiplication via NTT — maps well to both software and hardware implementations. The Fujisaki-Okamoto transform provides IND-CCA2 security with a simple and auditable construction.
 
 **Ecosystem readiness:** By the time of selection, Kyber had already been experimentally deployed by Google (in Chrome) and Cloudflare, demonstrating protocol-level compatibility and providing real-world performance data.
 

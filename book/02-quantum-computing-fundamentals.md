@@ -97,7 +97,7 @@ These states form a basis for two-qubit systems and play fundamental roles in qu
 
 **Quantum interference** is arguably the most important phenomenon for quantum algorithm design. Because probability amplitudes are complex numbers, they can add constructively (increasing the magnitude and thus the measurement probability) or destructively (decreasing or eliminating the measurement probability).
 
-Consider a qubit that is put into superposition and then subjected to two possible computational paths. If one path contributes an amplitude of +1/√2 and another contributes +1/√2 to a particular output, the total amplitude is +√2/√2 = 1, giving certainty of measuring that output (constructive interference). If instead one path contributes +1/√2 and another -1/√2, the total amplitude is zero, making that output impossible (destructive interference).
+Consider a qubit that is put into superposition and then subjected to two possible computational paths. If one path contributes an amplitude of +1/2 and another contributes +1/2 to a particular output, the total amplitude is +1, giving certainty of measuring that output (constructive interference). If instead one path contributes +1/2 and another -1/2, the total amplitude is zero, making that output impossible (destructive interference).
 
 Well-designed quantum algorithms structure their computations so that paths leading to correct answers interfere constructively while paths leading to incorrect answers interfere destructively. The quintessential example is Deutsch's algorithm (1985), which demonstrated that a quantum computer could determine a global property of a function with one evaluation, where a classical computer would require two. Though a toy problem, it established the paradigm of interference-based quantum speedup.
 
@@ -174,7 +174,7 @@ The depth of a circuit (the length of the longest path from input to output) and
 
 ### Universal Gate Sets
 
-A gate set is **universal** if any unitary operation can be approximated to arbitrary precision using gates from the set. The Solovay-Kitaev theorem guarantees that if a gate set is universal, then any n-qubit unitary can be approximated to precision ε using O(log^c(1/ε)) gates from the set, where c ≈ 3.97 (with later improvements reducing this constant).
+A gate set is **universal** if any unitary operation can be approximated to arbitrary precision using gates from the set. The Solovay-Kitaev theorem guarantees that if a gate set generates a dense subset of SU(2), then any single-qubit unitary can be approximated to precision ε using O(log^c(1/ε)) gates from the set, where c ≈ 3.97 (with later improvements reducing this constant). Combined with an entangling two-qubit gate (such as CNOT), this enables universal quantum computation on any number of qubits through standard circuit decomposition techniques.
 
 Common universal gate sets include:
 - {H, T, CNOT} — the standard fault-tolerant gate set
@@ -499,7 +499,7 @@ The resource requirements for factoring a 2048-bit number using Shor's algorithm
 | Study/Year | Logical Qubits | T-gate Count | Physical Qubits (estimated) | Runtime |
 |-----------|---------------|--------------|----------------------------|---------|
 | Fowler et al. (2012) | ~4,000 | ~10^10 | ~1 billion | Days |
-| Gidney & Ekerå (2021) | ~20,000 | ~10^9 | ~20 million | 8 hours |
+| Gidney & Ekerå (2021) | ~2,050 algorithm qubits (~6,000 total logical qubits with ancillas) | ~10^9 | ~20 million | 8 hours |
 | Litinski (2023) | ~3,700 | ~10^9 | ~4 million | Hours |
 | Various optimistic (2024-2025) | ~2,000-3,000 | ~10^8-10^9 | ~1-4 million | Hours |
 
