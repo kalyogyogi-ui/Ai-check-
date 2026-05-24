@@ -107,7 +107,7 @@ The exponential-to-polynomial collapse means that no amount of key-size increase
 
 Translating the abstract gate complexity into physical resource estimates requires accounting for quantum error correction overhead. Logical qubits must be encoded in many physical qubits to achieve fault tolerance, and the overhead depends on the error rate of physical qubits and the error correction code used.
 
-**Logical Qubit Requirements:** The most optimized implementations of Shor's algorithm for RSA-2048 require approximately 2,048 to 4,000 logical qubits. The 2021 paper by Gidney and Ekerå showed that 2,048 + 2 logical qubits suffice using windowed arithmetic and measurement-based uncomputation, representing a significant improvement over naive implementations that require 3n to 5n logical qubits.
+**Logical Qubit Requirements:** The most optimized implementations of Shor's algorithm for RSA-2048 require approximately 4,000-6,000 logical qubits. The 2021 paper by Gidney and Ekerå showed that 2,048 + 2 logical qubits suffice using windowed arithmetic and measurement-based uncomputation, representing a significant improvement over naive implementations that require 3n to 5n logical qubits.
 
 **T-gate Count and Depth:** The dominant cost in fault-tolerant quantum computing is T-gates (pi/8 rotation gates), as these require expensive magic state distillation. The Gidney-Ekerå construction requires approximately 2.7 * 10^9 Toffoli gates (each decomposable into T-gates). The overall T-depth is approximately 10^10, meaning the computation requires roughly 10 billion sequential layers of T-gates.
 
@@ -152,10 +152,10 @@ For an elliptic curve defined over a field F_q where q is approximately 2^k (so 
 
 - **Logical qubits:** Approximately 2k + O(log k) — roughly 521 logical qubits for the P-256 curve
 - **Quantum gates:** Approximately 10^8 to 10^9 Toffoli gates for P-256
-- **Physical qubits:** Approximately 2,500 to 5,000 with surface codes (far fewer than RSA-2048)
+- **Physical qubits:** Approximately 500,000 to 2,500,000 with surface codes (fewer than RSA-2048)
 - **Estimated runtime:** Minutes to hours on a CRQC
 
-The irony is profound: ECC was developed and promoted specifically as a more efficient alternative to RSA, offering equivalent security with much smaller keys. But this same compactness makes it easier to attack quantumly. A quantum computer capable of breaking P-256 would require roughly 100 times fewer physical qubits than one capable of breaking RSA-2048. This means that if quantum computing progress follows a gradual trajectory, ECC will become vulnerable significantly before RSA does — the opposite of the classical security ranking.
+The irony is profound: ECC was developed and promoted specifically as a more efficient alternative to RSA, offering equivalent security with much smaller keys. But this same compactness makes it easier to attack quantumly. A quantum computer capable of breaking P-256 would require roughly 5-10 times fewer physical qubits than one capable of breaking RSA-2048. This means that if quantum computing progress follows a gradual trajectory, ECC will become vulnerable significantly before RSA does — the opposite of the classical security ranking.
 
 This affects every system using ECDH for key exchange, ECDSA or EdDSA for digital signatures, and any protocol built upon these primitives. TLS 1.3 uses ECDH by default for key establishment; SSH commonly uses Ed25519; Bitcoin and Ethereum use secp256k1 ECDSA; and Signal Protocol uses X25519 for its key agreement.
 
@@ -254,7 +254,7 @@ Simon's algorithm (1994) solves the following problem: given a function f: {0,1}
 
 **Cryptographic Relevance:** Simon's algorithm is directly applicable to attacking certain block cipher constructions when the attacker has quantum superposition access to the encryption oracle (the Q2 or quantum chosen-plaintext model). Specifically:
 
-- The three-round Even-Mansour construction can be broken in polynomial quantum queries
+- The two-round Even-Mansour construction can be broken in polynomial quantum queries
 - Certain modes of operation (like CBC-MAC) become insecure under quantum superposition attacks
 - The Poly1305 MAC is vulnerable to Simon-style attacks in the superposition oracle model
 - Offset codebook mode (OCB) and related authenticated encryption schemes require careful analysis
@@ -375,10 +375,10 @@ The following table summarizes the quantum impact across all major cryptographic
 | RSA-2048 | Encryption, Signatures | Shor's (factoring) | O(n^2 log n) | ~20M physical qubits | Replace with ML-KEM/ML-DSA |
 | RSA-4096 | Encryption, Signatures | Shor's (factoring) | O(n^2 log n) | ~40M physical qubits | Replace with ML-KEM/ML-DSA |
 | DH-2048 | Key Exchange | Shor's (DLP) | O(n^2 log n) | ~20M physical qubits | Replace with ML-KEM |
-| ECDH P-256 | Key Exchange | Shor's (ECDLP) | O(n^2 log n) | ~5K physical qubits | Replace with ML-KEM |
-| ECDH P-384 | Key Exchange | Shor's (ECDLP) | O(n^2 log n) | ~7K physical qubits | Replace with ML-KEM |
-| ECDSA P-256 | Signatures | Shor's (ECDLP) | O(n^2 log n) | ~5K physical qubits | Replace with ML-DSA |
-| Ed25519 | Signatures | Shor's (ECDLP) | O(n^2 log n) | ~5K physical qubits | Replace with ML-DSA |
+| ECDH P-256 | Key Exchange | Shor's (ECDLP) | O(n^2 log n) | ~500K-2.5M physical qubits | Replace with ML-KEM |
+| ECDH P-384 | Key Exchange | Shor's (ECDLP) | O(n^2 log n) | ~750K-3.5M physical qubits | Replace with ML-KEM |
+| ECDSA P-256 | Signatures | Shor's (ECDLP) | O(n^2 log n) | ~500K-2.5M physical qubits | Replace with ML-DSA |
+| Ed25519 | Signatures | Shor's (ECDLP) | O(n^2 log n) | ~500K-2.5M physical qubits | Replace with ML-DSA |
 | ElGamal | Encryption | Shor's (DLP) | O(n^2 log n) | ~20M physical qubits | Replace with ML-KEM |
 
 ### Symmetric Cryptography (Weakened but Survivable)

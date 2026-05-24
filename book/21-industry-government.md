@@ -42,7 +42,7 @@ NSA's CNSA 2.0 guidance provides the most specific timeline for PQC adoption in 
 |----------|-------------|------------|
 | 2025 | PQC preferred for all firmware and software signing | ML-DSA-87, SLH-DSA |
 | 2025 | Begin transition planning for all other use cases | All CNSA 2.0 algorithms |
-| 2026 | PQC required for web browsers/servers, cloud services | ML-KEM-1024, ML-DSA-87 |
+| 2027 | PQC required for web browsers/servers, cloud services | ML-KEM-1024, ML-DSA-87 |
 | 2027 | PQC required for network protocols (TLS, SSH, IKE) | ML-KEM-1024, ML-DSA-87 |
 | 2028 | PQC required for operating systems and network infrastructure | All applicable algorithms |
 | 2029 | PQC required for custom/specialty applications | All applicable algorithms |
@@ -212,7 +212,7 @@ China's approach to PQC combines elements of independent development with select
 **Israel:**
 
 - National Cyber Directorate (INCD) published quantum computing preparedness guidance
-- Strong cybersecurity industry with multiple companies developing PQC solutions (ISARA, QuantLR)
+- Strong cybersecurity industry with multiple companies developing PQC solutions (QuantLR)
 - Defense establishment actively migrating classified systems to PQC
 - Academic cryptography community (Weizmann, Technion, Tel Aviv University) contributing foundational PQC research
 - Military intelligence operations driving early adoption timelines
@@ -524,6 +524,7 @@ OQS is the most important open-source PQC research infrastructure:
 - **OQS-BoringSSL:** Integration with Google's BoringSSL for applications using that library
 - **oqs-demos:** Demonstration applications (web servers, VPNs, email) showing PQC in realistic deployments
 - Community-maintained with primary development at University of Waterloo (Canada) and TU Darmstadt (Germany)
+- ISARA Corporation, a Canadian company (Waterloo, Ontario), has contributed significantly to PQC migration tooling and hybrid certificate development
 - Essential for interoperability testing: OQS implementations serve as reference for verifying correctness of other implementations
 - Integration with Docker containers, CI/CD pipelines, and cloud environments for easy experimentation
 

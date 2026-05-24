@@ -4,7 +4,7 @@
 
 The transition from classical to post-quantum cryptography presents a dilemma that has no precedent in the history of cryptographic deployment. Previous algorithm transitions—from DES to AES, from MD5 to SHA-256, from 1024-bit RSA to 2048-bit RSA—replaced algorithms that were known to be weakened with stronger alternatives whose security margins were well-characterized. The post-quantum transition is fundamentally different: we are replacing algorithms (RSA, ECDSA, ECDH) whose classical security is backed by decades of cryptanalytic study with algorithms (ML-KEM, ML-DSA) that are comparatively young and rest on mathematical problems that, while extensively studied, have not endured as many years of scrutiny.
 
-This asymmetry creates a unique risk. If a post-quantum algorithm is later found to have an unexpected weakness—as happened with SIKE/SIDH, a NIST PQC finalist that was completely broken in 2022 by a novel mathematical attack—systems that had entirely replaced their classical cryptography with the compromised PQC scheme would be left unprotected. Conversely, systems that delay PQC deployment indefinitely remain vulnerable to "harvest now, decrypt later" attacks by adversaries who capture encrypted traffic today for future quantum decryption.
+This asymmetry creates a unique risk. If a post-quantum algorithm is later found to have an unexpected weakness—as happened with SIKE/SIDH, a NIST PQC Round 4 candidate that was completely broken in 2022 by a novel mathematical attack—systems that had entirely replaced their classical cryptography with the compromised PQC scheme would be left unprotected. Conversely, systems that delay PQC deployment indefinitely remain vulnerable to "harvest now, decrypt later" attacks by adversaries who capture encrypted traffic today for future quantum decryption.
 
 The **hybrid approach** resolves this dilemma by combining classical and post-quantum algorithms in a single construction, providing a security guarantee that holds as long as **either** component remains secure. This "best of both worlds" property means:
 - If PQC algorithms prove weaker than expected, the classical component still provides security.
@@ -15,7 +15,7 @@ The **hybrid approach** resolves this dilemma by combining classical and post-qu
 
 **Cryptanalytic immaturity of PQC.** While ML-KEM and ML-DSA have been extensively analyzed throughout the NIST competition, they have been the subject of intensive global scrutiny for roughly a decade—compared to RSA's 47+ years and ECDSA's 30+ years. Novel lattice attacks continue to be discovered (though none have been fatal to Module-LWE), and the possibility of an unforeseen breakthrough cannot be excluded.
 
-**The SIKE precedent.** In 2022, the SIDH/SIKE algorithm—a NIST PQC finalist with four years of competition-stage analysis—was completely broken by Castryck and Decru using techniques from algebraic geometry that the cryptographic community had not anticipated. This demonstrated that PQC algorithms can fail suddenly and completely, validating the conservative approach of maintaining classical algorithms as a fallback.
+**The SIKE precedent.** In 2022, the SIDH/SIKE algorithm—a NIST PQC alternate candidate with four years of competition-stage analysis—was completely broken by Castryck and Decru using techniques from algebraic geometry that the cryptographic community had not anticipated. This demonstrated that PQC algorithms can fail suddenly and completely, validating the conservative approach of maintaining classical algorithms as a fallback.
 
 **Regulatory requirements.** Multiple national security agencies (BSI in Germany, ANSSI in France, NCSC in the UK, CCCS in Canada) explicitly mandate or strongly recommend hybrid approaches during the transition period. Some regulations require the continued presence of approved classical algorithms alongside any PQC deployment.
 
@@ -85,7 +85,7 @@ This feeds into the standard TLS 1.3 key derivation to produce handshake keys, a
 **ClientHello size analysis:**
 - A typical TLS 1.3 ClientHello without PQC: ~300-500 bytes
 - With X25519_ML-KEM-768 key share: ~1,500-1,700 bytes
-- This still fits within a single TCP segment (MSS typically 1,460 bytes with standard headers, or up to ~1,400 bytes with options)
+- This may require two TCP segments (MSS typically 1,460 bytes with standard headers, or up to ~1,400 bytes with options)
 - In practice, the ServerHello also grows (ML-KEM ciphertext: 1,088 bytes for Level 3)
 
 **Backward compatibility.** Clients include both the hybrid group and classical-only groups in `supported_groups`. Servers that do not support hybrid select a classical group, falling back gracefully. This allows incremental deployment without breaking existing servers.

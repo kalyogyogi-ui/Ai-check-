@@ -1,6 +1,6 @@
 # Chapter 6: Code-Based Cryptography
 
-Code-based cryptography stands as the oldest family of post-quantum cryptographic schemes, tracing its origins to Robert McEliece's 1978 proposal — a system that appeared just one year after the Diffie-Hellman key exchange and predated the RSA cryptosystem's publication. In nearly five decades since its introduction, no efficient classical or quantum algorithm has been found to break the McEliece system with properly chosen parameters. This remarkable longevity, combined with the well-understood computational hardness of decoding random linear codes, positions code-based constructions as one of the most trusted foundations for post-quantum security.
+Code-based cryptography stands as the oldest family of post-quantum cryptographic schemes, tracing its origins to Robert McEliece's 1978 proposal — a system contemporaneous with RSA (both 1978, though RSA's MIT technical report circulated in 1977) and appearing just two years after the Diffie-Hellman key exchange. In nearly five decades since its introduction, no efficient classical or quantum algorithm has been found to break the McEliece system with properly chosen parameters. This remarkable longevity, combined with the well-understood computational hardness of decoding random linear codes, positions code-based constructions as one of the most trusted foundations for post-quantum security.
 
 The core insight behind code-based cryptography is elegant: certain structured error-correcting codes admit efficient decoding algorithms, but when the structure is concealed — through scrambling transformations or embedding within seemingly random matrices — the resulting decoding problem becomes computationally intractable. An adversary facing the public key sees what appears to be a random linear code, for which the best known decoding algorithms require exponential time in the code parameters.
 
@@ -19,7 +19,7 @@ A **linear code** C(n, k, d) over a finite field F_q is defined as a k-dimension
 - **d** (minimum distance): The minimum Hamming distance between any two distinct codewords, equivalently the minimum Hamming weight of any non-zero codeword (by linearity).
 - **Rate** R = k/n: The ratio of information symbols to total symbols, measuring the efficiency of the encoding.
 
-The error-correction capability of a linear code is determined by its minimum distance: a code with minimum distance d can detect up to d-1 errors and correct up to t = ⌊(d-1)/2⌋ errors. This bound is known as the Hamming bound, and codes that achieve it with equality are called perfect codes.
+The error-correction capability of a linear code is determined by its minimum distance: a code with minimum distance d can detect up to d-1 errors and correct up to t = ⌊(d-1)/2⌋ errors. This value of t defines the error correction capability. The Hamming bound is a separate sphere-packing bound on code size: |C| ≤ q^n / V(n,t), where V(n,t) is the volume of a Hamming ball of radius t. Codes that achieve the Hamming bound with equality are called perfect codes.
 
 The **Hamming weight** wt(v) of a vector v is the number of its non-zero coordinates. The **Hamming distance** d(u, v) between two vectors is the number of positions where they differ, which equals wt(u - v) for vectors over any field.
 

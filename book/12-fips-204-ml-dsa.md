@@ -272,7 +272,7 @@ The security margin between classical and quantum estimates (roughly 10-15%) ref
 ### Known Attack Vectors and Cryptanalysis
 
 **1. Primal attack (key recovery via lattice reduction):**
-The attacker constructs a lattice from the public matrix **A** and target vector **t**, then applies BKZ (Block Korzlov-Zolotarev) reduction to find the short secret vectors **s₁**, **s₂**. The cost scales exponentially with the lattice dimension and inversely with the ratio of the secret norm to the lattice determinant. This is the most relevant attack and determines parameter selection.
+The attacker constructs a lattice from the public matrix **A** and target vector **t**, then applies BKZ (Block Korkin-Zolotarev) reduction to find the short secret vectors **s₁**, **s₂**. The cost scales exponentially with the lattice dimension and inversely with the ratio of the secret norm to the lattice determinant. This is the most relevant attack and determines parameter selection.
 
 **2. Dual attack:**
 Rather than finding the secret directly, the attacker finds a short vector in the dual lattice that can serve as a distinguisher between MLWE samples and random. Recent work has refined dual attack estimates, with some analyses suggesting slightly better performance than the primal attack in certain regimes, though this remains debated in the community.

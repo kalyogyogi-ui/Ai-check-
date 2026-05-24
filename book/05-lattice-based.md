@@ -73,7 +73,7 @@ The **approximate SVP** (gamma-SVP) relaxes the requirement: find a non-zero vec
 
 - For gamma = 2^(n/2), the LLL algorithm solves gamma-SVP in polynomial time.
 - For gamma = poly(n), no polynomial-time algorithm is known (classical or quantum).
-- For gamma = 2^(sqrt(n)), the problem is known to lie outside NP intersect coNP (assuming standard complexity assumptions).
+- For gamma = sqrt(n), GapSVP lies in NP ∩ coNP (Aharonov-Regev, 2005). For polynomial approximation factors, the problem is believed hard, but for super-polynomial gamma the problem becomes easier.
 - For gamma = n^(O(1)), the problem is believed to be hard even for quantum computers — this is the regime relevant to cryptography.
 
 The **GapSVP** (decisional version) asks to distinguish between lattices with lambda_1 <= 1 and those with lambda_1 > gamma. This gap problem features prominently in worst-case to average-case reductions.

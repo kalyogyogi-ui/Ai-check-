@@ -166,7 +166,7 @@ This appendix provides a curated guide to the literature, standards, communities
 
 **Sikeridis, D., Kampanakis, P., & Devetsikiotis, M. (2020)** "Assessing the Overhead of Post-Quantum Cryptography in TLS 1.3 and SSH." CoNEXT 2020. Empirical measurement of PQC impact on protocol performance across different network conditions (varying latency, bandwidth, packet loss). Provides data-driven guidance for deployment planning in diverse network environments.
 
-**Kwiatkowski, K. & Langley, A. (2019)** "Measuring TLS Key Exchange with Post-Quantum KEM." Workshop on PQC Standardization, NIST. Reports on Google's CECPQ2 experiment measuring ML-KEM hybrid performance in production Chrome traffic. Demonstrated negligible performance impact and identified middlebox compatibility issues resolved by record splitting.
+**Kwiatkowski, K. & Langley, A. (2019)** "Measuring TLS Key Exchange with Post-Quantum KEM." Workshop on PQC Standardization, NIST. Reports on Google's CECPQ2 experiment measuring NTRU-HRSS hybrid key exchange performance in production Chrome traffic (note: CECPQ2 used NTRU-HRSS, not Kyber/ML-KEM; the later X25519Kyber768 experiment was a separate effort). Demonstrated negligible performance impact and identified middlebox compatibility issues resolved by record splitting.
 
 **Kampanakis, P. & Stebila, D. (2021)** "Post-Quantum Signatures in TLS 1.3: A Measurement Study." IMC 2021 (Internet Measurement Conference). Measures the impact of PQC signatures (specifically the larger certificate chains) on TLS handshake performance. Identifies certificate chain transmission as the primary bottleneck and evaluates mitigation strategies (compression, caching, certificate omission).
 

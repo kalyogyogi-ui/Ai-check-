@@ -236,7 +236,7 @@ CRYSTALS-Dilithium uses the "Fiat-Shamir with Aborts" paradigm: generate a commi
 
 **Module-LWE foundation.** Like Kyber, Dilithium builds on Module-LWE (specifically, Module-SIS for the signature scheme), providing a shared mathematical foundation between NIST's KEM and signature standards. This conceptual consistency simplifies security analysis and may allow shared implementations of core arithmetic routines.
 
-**Reasonable sizes.** At NIST Level 3, ML-DSA produces 3,293-byte signatures with 1,952-byte public keys. While significantly larger than classical ECDSA (64-byte signatures, 32-byte keys), these sizes are manageable for most applications. Certificate chains, signed software updates, and protocol messages can accommodate this overhead without fundamental redesign.
+**Reasonable sizes.** At NIST Level 3, ML-DSA produces 3,309-byte signatures with 1,952-byte public keys. While significantly larger than classical ECDSA (64-byte signatures, 32-byte keys), these sizes are manageable for most applications. Certificate chains, signed software updates, and protocol messages can accommodate this overhead without fundamental redesign.
 
 ### Why FALCON Was Not Primary (But Still Selected)
 
@@ -272,7 +272,7 @@ SPHINCS+ was the only non-lattice signature scheme selected for standardization 
 
 SLH-DSA's conservative design comes at a significant performance cost:
 
-**Large signatures.** SLH-DSA signatures range from approximately 7,856 bytes (fastest parameter sets) to 49,856 bytes (smallest parameter sets), compared to ML-DSA's 2,420-3,293 bytes. This is a direct consequence of the Merkle tree structure—the signature must include an authentication path through the tree.
+**Large signatures.** SLH-DSA signatures range from approximately 7,856 bytes (smallest parameter sets) to 49,856 bytes (fastest parameter sets), compared to ML-DSA's 2,420-3,309 bytes. This is a direct consequence of the Merkle tree structure—the signature must include an authentication path through the tree.
 
 **Slow signing.** Signing operations require traversing and computing multiple hash trees, taking milliseconds rather than microseconds. The SLH-DSA-SHAKE-128f ("fast") parameter set takes approximately 5 ms to sign, while SLH-DSA-SHAKE-128s ("small") takes approximately 100 ms but produces smaller signatures.
 
