@@ -9,17 +9,19 @@ The strategic frame across all five audiences: **the next five years of technica
 ## 1. Recommendations for Authors
 
 ### 1.1 Where to write
-- **Tier-1 priority** (high return, durable):
-  - PQC migration for security engineers (book idea #21).
-  - Agentic systems engineering as a discipline (book idea #1).
-  - AI assurance / governance / audit (book ideas #16-18).
-  - Inference economics / serving (book idea #2).
-  - AI-native software engineering (book idea #7).
-- **Tier-2 priority** (strong, audience-specific):
-  - Mechanistic interpretability (academic).
-  - Tokenization of real-world assets (finance/legal).
-  - Edge / on-device LLM engineering (mobile/embedded).
-  - Multi-agent SRE / AgentOps.
+- **Tier-1 priority** (high return, durable, BCQ-anchored):
+  - The Post-Quantum Migration Playbook ([`05` #38](./05-top-100-book-ideas.md)) — the single highest-COS slot in the entire field.
+  - Cryptographic Agility ([`05` #39](./05-top-100-book-ideas.md)) — the structural twin of the migration playbook.
+  - Tokenizing Real-World Assets ([`05` #73](./05-top-100-book-ideas.md)) — the largest unfilled slot in finance-tech publishing.
+  - The Quantum-Ready Enterprise ([`05` #32](./05-top-100-book-ideas.md)) — the *commercial* quantum book the market wants.
+  - Smart Contract Security by Design / Audit Engineering Handbook ([`05` #64–#65](./05-top-100-book-ideas.md)).
+  - AI-only Tier-1 candidates (not numbered in BCQ-focused [`05`](./05-top-100-book-ideas.md) but discussed in [`04`](./04-market-gaps.md)): senior agentic-systems engineering, AI assurance, inference economics, AI-native software engineering.
+- **Tier-2 priority** (strong, audience-specific, BCQ-anchored):
+  - Engineering a Quantum Compiler ([`05` #1](./05-top-100-book-ideas.md)) — generational textbook slot.
+  - Building L2 Rollups ([`05` #68](./05-top-100-book-ideas.md)) and zkVM Engineering ([`05` #56](./05-top-100-book-ideas.md)).
+  - PQC for Embedded and IoT ([`05` #42](./05-top-100-book-ideas.md)) — defensible, regulator-aligned niche.
+  - EUDI Wallet & Verifiable Credentials Engineering ([`05` #91](./05-top-100-book-ideas.md)) — eIDAS 2.0 mandate.
+  - AI for Quantum Control ([`05` #94](./05-top-100-book-ideas.md)) — the *real* AI×Quantum intersection.
 - **Avoid** (saturated, low return):
   - Generic *Build with X chatbot* books.
   - Beginner Python + ML.
@@ -89,16 +91,19 @@ The strategic frame across all five audiences: **the next five years of technica
 ## 3. Recommendations for Universities
 
 ### 3.1 Curriculum modernization (priority order)
-1. **Deprecate** introductory ML courses anchored on pre-transformer textbooks. Adopt the next-generation foundational AI textbook (book idea #41) as soon as it ships in 2027-2028.
+1. **Deprecate** introductory ML courses anchored on pre-transformer textbooks. Adopt the next-generation foundational AI textbook (a key gap; see [`04` G1](./04-market-gaps.md)) as soon as it ships in 2027-2028.
 2. **Add** a graduate course in *agentic systems engineering* — the discipline currently has no canonical course but the demand is enormous.
 3. **Add** a graduate course in *AI evaluations* — methodologically novel, employer-relevant.
-4. **Add** a graduate course in *mechanistic interpretability*, anchored on the textbook (idea #43).
+4. **Add** a graduate course in *mechanistic interpretability* (textbook gap; [`04` §6](./04-market-gaps.md)).
 5. **Add** a *VLA / robotics-AI* course replacing classical-only robotics in robotics programs.
-6. **Add** a graduate course in *PQC engineering* — particularly in EE/CS programs in security tracks.
-7. **Replace** introductory cryptography courses' last third with PQC + cryptographic agility content.
-8. **Add** an *AI law / EU AI Act* course in law schools and policy schools.
-9. **Add** an *AI-public-sector engineering* track in MPA programs — anchored on the public-sector ops manual (idea #98).
-10. **Add** an *AI assurance and audit* concentration in MS-IS / MIS programs.
+6. **Add** a graduate course in *PQC engineering* — particularly in EE/CS programs in security tracks. Anchor with [`05` #46](./05-top-100-book-ideas.md) (lattice cryptography) and [`05` #38–#49](./05-top-100-book-ideas.md) for practitioner depth.
+7. **Replace** introductory cryptography courses' last third with PQC + cryptographic agility content ([`05` #39](./05-top-100-book-ideas.md)).
+8. **Add** a *programmable-cryptography* graduate course (ZK + FHE + MPC + threshold) — anchor with [`05` #62–#63](./05-top-100-book-ideas.md).
+9. **Add** a graduate course in *fault-tolerant quantum computing* anchored on [`05` #1, #3, #10](./05-top-100-book-ideas.md).
+10. **Add** an *AI law / EU AI Act* course in law schools and policy schools.
+11. **Add** an *AI-public-sector engineering* track in MPA programs (gap discussed in [`04`](./04-market-gaps.md)).
+12. **Add** an *AI assurance and audit* concentration in MS-IS / MIS programs.
+13. **Add** a *blockchain / tokenization for finance* course in MBA programs anchored on [`05` #73–#78](./05-top-100-book-ideas.md).
 
 ### 3.2 Research publishing
 - Encourage faculty to publish *F&T-style surveys* before full monographs — better scholarly impact per hour, better acquisition signal for academic presses.
@@ -124,7 +129,7 @@ The strategic frame across all five audiences: **the next five years of technica
 - Translate the top-tier English AI-literacy texts into national languages within 12 months of release. Most countries do this in 24-36 today. The gap matters.
 
 ### 4.3 Quantum workforce development
-- Combine *quantum-readiness CTO playbook* (idea #86) with *PQC migration playbook* (idea #21) as a distributed government-procurement bundle for critical-infrastructure operators.
+- Combine *quantum-readiness CTO playbook* ([`05` #32](./05-top-100-book-ideas.md)) with *PQC migration playbook* ([`05` #38](./05-top-100-book-ideas.md)) and *PQC audit & compliance* ([`05` #49](./05-top-100-book-ideas.md)) as a distributed government-procurement bundle for critical-infrastructure operators.
 - Fund quantum-engineering graduate textbooks targeted at non-physicist engineers; the talent bottleneck is at the engineering-meets-physics seam.
 
 ### 4.4 Specific government plays
@@ -142,9 +147,9 @@ The strategic frame across all five audiences: **the next five years of technica
 ## 5. Recommendations for Enterprises
 
 ### 5.1 Internal technical education programs
-- **Books-as-curriculum** outperforms ad-hoc course consumption for senior-practitioner skill-building. Build cohort book-club programs around senior-practitioner playbooks (book ideas #1, #2, #4, #7).
-- **Cert-prep programs** combining ISACA AAIA + IAPP AIGP + ISO 42001 lead-auditor are the single highest-ROI internal training investment for any organization with an AI compliance function.
-- **AI red-team capability building** anchored on book ideas #11-13.
+- **Books-as-curriculum** outperforms ad-hoc course consumption for senior-practitioner skill-building. Build cohort book-club programs around the BCQ senior-practitioner playbooks: PQC migration ([`05` #38](./05-top-100-book-ideas.md)), cryptographic agility ([`05` #39](./05-top-100-book-ideas.md)), smart-contract security ([`05` #64](./05-top-100-book-ideas.md)), and the quantum-readiness executive set ([`05` #32–#37](./05-top-100-book-ideas.md)). Senior AI playbooks (agentic systems, inference economics, AI-native engineering) are equally relevant though not numbered in the BCQ-focused Phase 5.
+- **Cert-prep programs** combining ISACA AAIA + IAPP AIGP + ISO 42001 lead-auditor + the emerging PQC migration certs ([`05` #49](./05-top-100-book-ideas.md)) are the single highest-ROI internal training investment for any organization with an AI-or-crypto compliance function.
+- **Smart-contract audit capability building** anchored on [`05` #64–#65, #88–#90](./05-top-100-book-ideas.md) for any organization holding tokenized assets, custody operations, or DeFi exposure.
 
 ### 5.2 Workforce upskilling publishing
 - Co-publish industry-specific reference works with publishers under enterprise sponsorship. The case-study density of industry-anchored books is dramatically higher than independently-commissioned ones, and the publisher gets durable IP.

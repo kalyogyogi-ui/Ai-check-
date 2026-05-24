@@ -242,7 +242,7 @@ This phase is a **topic-by-topic field guide** for acquisitions decisions. The r
 - **Buyer:** Security engineers, cryptographers, GRC, CISOs, sovereign customers
 - **RF:** SPB, GT, CP, RM, EB
 - **Publishing read:** **PQC is the highest composite-opportunity-score topic across the entire deep-tech publishing landscape, period.** Specifically:
-  - *PQC migration handbook* for enterprise security teams — empty slot, mandatory deadlines, willing-to-pay buyers, multi-year shelf life. (See Phase 5 idea #1.)
+  - *PQC migration handbook* for enterprise security teams — empty slot, mandatory deadlines, willing-to-pay buyers, multi-year shelf life. (See [Phase 5 #38](./05-top-100-book-ideas.md).)
   - *Cryptographic agility engineering* — empty slot.
   - *Hybrid TLS / PKI in transition* — empty slot.
   - *Lattice cryptography graduate textbook successor* — CUP lane.

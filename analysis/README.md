@@ -19,7 +19,7 @@
 | 02 | [`02-publisher-catalogs.md`](./02-publisher-catalogs.md) | What does each major publisher already own, where are their catalogs thin, and who is best positioned for which 2026-2030 wave? |
 | 03 | [`03-technology-trends.md`](./03-technology-trends.md) | Topic-level trend mapping across AI, Blockchain/Web3, Quantum, and cross-cuts. Maturity stage, half-life, and publishability of each sub-domain. |
 | 04 | [`04-market-gaps.md`](./04-market-gaps.md) | The gap matrix: oversaturated vs. underserved, with opportunity scoring (market × research × longevity × scalability). |
-| 05 | [`05-top-100-book-ideas.md`](./05-top-100-book-ideas.md) | 100 concrete book concepts with title, audience, USP, suggested publisher, viability score, and shelf-life forecast. |
+| 05 | [`05-top-100-book-ideas.md`](./05-top-100-book-ideas.md) | **100 concrete book concepts focused on Blockchain · Crypto · Quantum** with title, audience, USP, suggested publisher, viability score, and shelf-life forecast. Distribution: 37 quantum · 26 cryptography (PQC, QKD, programmable crypto) · 30 blockchain · 7 cross-cuts (AI×Crypto×Quantum). |
 | 06 | [`06-forecasts.md`](./06-forecasts.md) | Industry forecasts for 2026, 2027, 2028, 2030, 2035 — including AI's impact on technical publishing itself. |
 | 07 | [`07-strategic-recommendations.md`](./07-strategic-recommendations.md) | Plays for authors, publishers, universities, governments, enterprises. Plus advanced extensions (ISBN/Amazon/GitHub/certification economy). |
 
