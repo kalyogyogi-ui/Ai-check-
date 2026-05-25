@@ -1,12 +1,8 @@
 # Post-Quantum Cryptography: Engineering the Migration
 
-**Complete manuscript (revised edition)** — single-file export.
-
----
-
-# Post-Quantum Cryptography: Engineering the Migration
-
 ## Securing Digital Infrastructure Beyond the Quantum Threat Model
+
+*Complete manuscript (revised edition) — single-file export. Chapters 1–22 and Appendices A–D.*
 
 ---
 
@@ -41,13 +37,8 @@ Figures and architecture diagrams appear in every chapter because cryptography i
 
 ## Table of Contents
 
-See `manuscript/chapters/` and `manuscript/appendices/` for chapter files.
+*Replace bracketed author fields in the preface before publication.*
 
----
-
-*Replace bracketed author fields before publisher submission.*
-
-## Table of Contents
 
 - PART I — FOUNDATIONS
 
