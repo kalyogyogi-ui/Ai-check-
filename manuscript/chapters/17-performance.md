@@ -2,17 +2,6 @@
 
 Never trust a microsecond table without **CPU, library version, and percentile**—we publish our methodology before our winners.
 
-**Figure 17.1 — Benchmark dimensions**
-
-```mermaid
-flowchart LR
-  CPU[Platform] --> LAT[Latency percentiles]
-  CPU --> SIZE[Bytes on wire]
-  SIZE --> COST[Cloud egress $]
-```
-
----
-
 ## 17.1 Performance Metrics for PQC
 
 Evaluating post-quantum cryptographic algorithms requires a multidimensional analysis that goes far beyond simple "operations per second" measurements. The transition from classical to post-quantum cryptography changes the performance landscape in ways that affect system architecture, protocol design, and deployment decisions. Understanding these metrics — and their interactions — is essential for making informed choices about algorithm selection and deployment strategy.
@@ -69,16 +58,19 @@ Throughput and latency often trade off: batching operations improves throughput 
 > **Author's note:** Report p50 **and** p99 for ML-DSA signing; means lie.
 
 
-**Figure 17.2 — Measurement checklist**
+## 17.2 KEM Performance Comparison
+
+**Figure 17.1 — Benchmark dimensions**
 
 ```mermaid
-flowchart LR
-  HW[Document CPU] --> LIB[Library version]
-  LIB --> PCT[Report p50 p99]
-  PCT --> NET[Include bytes on wire]
+flowchart TB
+  HW[CPU model AVX] --> LAT[Latency p50 p99]
+  LIB[Library version] --> LAT
+  NET[Bytes handshake] --> COST[Egress cost]
 ```
 
-## 17.2 KEM Performance Comparison
+*Figure 17.1 defines what we publish alongside any μs number.*
+
 
 ### Computational Performance (x86-64, AVX2)
 
@@ -166,6 +158,18 @@ Understanding how performance scales with increasing security requirements helps
 The scaling is sub-quadratic because the NTT cost (O(n log n)) is fixed — only the number of polynomial multiplications (proportional to k²) increases. Moving from Level 1 to Level 5 roughly doubles the cost, a much gentler scaling than RSA (where doubling the security level requires roughly 8x the computation due to the cube-law of modular exponentiation cost).
 
 ## 17.3 Signature Performance Comparison
+
+**Figure 17.2 — Benchmark report template**
+
+```mermaid
+flowchart LR
+  ENV[Environment doc] --> RUN[Raw results]
+  RUN --> PCT[Percentiles]
+  PCT --> PUB[Published table]
+```
+
+*Figure 17.2 is mandatory metadata—without it, tables are not comparable.*
+
 
 ### Computational Performance (x86-64, AVX2)
 

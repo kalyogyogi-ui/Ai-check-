@@ -2,17 +2,6 @@
 
 SLH-DSA is our choice when we want **hash-only assumptions** and can pay signature bytes.
 
-**Figure 13.1 — SLH-DSA hypertree sketch**
-
-```mermaid
-flowchart TB
-  FORS[FORS few-time sigs] --> WOTS[WOTS+ chains]
-  WOTS --> HT[Hypertree layers]
-  HT --> ROOT[Root in public key]
-```
-
----
-
 ## 13.1 Overview
 
 SLH-DSA (Stateless Hash-Based Digital Signature Algorithm), standardized as FIPS 205 by NIST in August 2024, represents the most conservative approach to post-quantum digital signatures. Derived from the SPHINCS+ submission, SLH-DSA occupies a unique position in the NIST post-quantum portfolio: its security rests solely on the well-understood properties of cryptographic hash functions — specifically second-preimage resistance and pseudorandomness — without relying on any algebraic or number-theoretic hardness assumptions.
@@ -24,18 +13,19 @@ The trade-off for this extraordinary security conservatism is performance: SLH-D
 SLH-DSA achieves the remarkable property of being stateless despite being built from inherently stateful primitives. Classical hash-based signature schemes like XMSS and LMS require the signer to maintain a counter that tracks which one-time keys have been used; reusing a key compromises security catastrophically. SLH-DSA eliminates this state management requirement through a deterministic indexing mechanism that derives the signing path from the message itself, making deployment substantially simpler and eliminating an entire class of operational failure modes.
 
 
-**Figure 13.2 — Parameter trade-off axes**
-
-```mermaid
-quadrantChart
-  title SLH-DSA variant axes
-  x Small sigs --> Large sigs
-  y Fast --> Slow
-```
-
 ## 13.2 Architecture: The Hypertree
 
 SLH-DSA employs a sophisticated layered structure called a hypertree that composes three distinct cryptographic building blocks into a single unified signature scheme. Understanding this architecture requires examining each component and how they interconnect.
+
+**Figure 13.1 — SLH-DSA hypertree**
+
+```mermaid
+flowchart TB
+  FORS[FORS OTS layer] --> WOTS[WOTS+ chains]
+  WOTS --> HT[Hypertree]
+```
+
+*Figure 13.1 connects FORS, WOTS+, and hypertree layers in one view.*
 
 ### The Three Building Blocks
 
@@ -88,6 +78,16 @@ Verification reverses this chain: starting from the FORS signature, it reconstru
 ## 13.3 Parameter Sets
 
 SLH-DSA offers twelve parameter sets, providing flexibility across three security levels, two hash function families, and two optimization targets:
+
+**Figure 13.2 — Fast (f) vs small (s) parameter axis**
+
+```mermaid
+flowchart LR
+  F[SHA2-128f] --> FAST[Faster larger sig]
+  S[SHA2-128s] --> SMALL[Smaller slower]
+```
+
+*Figure 13.2 guides parameter pick: bandwidth vs CPU, not security level alone.*
 
 ### SHA-256 Based Parameter Sets
 

@@ -2,17 +2,6 @@
 
 Rejection sampling is not a detail—it is **the reason ML-DSA is secure**. Budget signing latency accordingly.
 
-**Figure 12.1 — Fiat–Shamir with aborts**
-
-```mermaid
-flowchart TD
-  Y[Sample masking y] --> Z[Compute z = y + c s]
-  Z -->|norm ok| OUT[Output signature]
-  Z -->|reject| Y
-```
-
----
-
 ## 12.1 Overview
 
 ML-DSA (Module-Lattice-Based Digital Signature Algorithm), standardized as FIPS 204 by NIST in August 2024, is the primary post-quantum digital signature standard selected through NIST's multi-year Post-Quantum Cryptography Standardization Process. Derived from the CRYSTALS-Dilithium submission, ML-DSA represents the culmination of over a decade of research into practical lattice-based signature schemes. It provides existential unforgeability under chosen-message attacks (EUF-CMA), the standard security notion for digital signatures, meaning that an adversary who can adaptively obtain signatures on messages of their choice still cannot produce a valid signature on any new message not previously queried.
@@ -26,6 +15,19 @@ ML-DSA is positioned as the general-purpose signature algorithm in NIST's post-q
 > **Author's note:** Capacity-plan signing for **p99** latency; rejection sampling variance is not noise.
 
 ## 12.2 Design Philosophy: Fiat-Shamir with Aborts
+
+**Figure 12.1 — Fiat–Shamir with aborts (signing loop)**
+
+```mermaid
+flowchart TD
+  Y[Sample y] --> Z[z = y + c s]
+  Z --> CHK{||z|| bound?}
+  CHK -->|no| Y
+  CHK -->|yes| OUT[Output sig]
+```
+
+*Figure 12.1 is why ML-DSA signing time has variance—size clusters for p99.*
+
 
 ### The Classical Fiat-Shamir Transform
 
@@ -72,6 +74,17 @@ The technique can be understood through an analogy: imagine a biased coin that t
 ## 12.3 Parameter Sets
 
 ML-DSA defines three parameter sets targeting different NIST security levels:
+
+**Figure 12.2 — ML-DSA parameter sets (k, ℓ)**
+
+```mermaid
+flowchart LR
+  D44[ML-DSA-44 k4 l4] --> L2[Level 2]
+  D65[ML-DSA-65 k6 l5] --> L3[Level 3]
+  D87[ML-DSA-87 k8 l7] --> L5[Level 5]
+```
+
+*Figure 12.2 maps ML-DSA-44/65/87 to NIST levels 2/3/5.*
 
 | Parameter | ML-DSA-44 | ML-DSA-65 | ML-DSA-87 |
 |-----------|----------|----------|----------|

@@ -2,16 +2,6 @@
 
 Rainbow's break is a lesson in **structure leaks**; UOV survives because boring can be good.
 
-**Figure 8.1 — Oil and vinegar partition**
-
-```mermaid
-flowchart LR
-  V[Vinegar variables] --> LIN[Linear in oil after fix v]
-  O[Oil variables] --> SOLVE[Solve small system]
-```
-
----
-
 ## 8.1 The Multivariate Quadratic Problem
 
 Multivariate cryptography stands apart from other post-quantum families by drawing its hardness not from geometric lattice problems or error-correcting codes, but from the algebraic difficulty of solving systems of polynomial equations over finite fields. The fundamental problem underpinning this entire family—the Multivariate Quadratic (MQ) problem—has been studied in computational algebra for decades and possesses strong theoretical complexity guarantees that persist even in the presence of quantum computers.
@@ -74,17 +64,19 @@ In practice, most multivariate schemes work over small finite fields:
 The choice of field affects the number of variables and equations needed: larger fields allow fewer variables for the same security level (since each variable carries more entropy), but individual field operations become more expensive.
 
 
-**Figure 8.2 — Rainbow break lesson**
-
-```mermaid
-flowchart TD
-  Layers[Multiple OV layers] --> Leak[Algebraic structure leak]
-  Leak --> Break[Practical key recovery 2022]
-```
-
 ## 8.2 The Trapdoor Construction Paradigm
 
 A random system of multivariate quadratic polynomials is computationally intractable to solve—but it is equally intractable to invert for the legitimate key holder. The fundamental challenge in multivariate cryptography is constructing polynomial systems that appear random to an external observer yet possess a hidden mathematical structure (a trapdoor) that enables efficient inversion by the secret key holder.
+
+**Figure 8.1 — Oil and vinegar variable split**
+
+```mermaid
+flowchart LR
+  V[vinegar vars] --> LIN[Linear in oil]
+  O[oil vars] --> SOLVE[Easy solve]
+```
+
+*Figure 8.1 explains the trapdoor: fix vinegar, solve linear system in oil variables.*
 
 ### The Central Map Approach
 
@@ -235,6 +227,16 @@ Each attack improvement has been addressable through modest parameter increases,
 ## 8.4 Rainbow (Historical — Broken in 2022)
 
 Rainbow, designed by Jintai Ding and Dieter Schmidt in 2005, was for many years considered the most efficient multivariate signature scheme. It advanced to the third round of the NIST PQC competition before being catastrophically broken by Ward Beullens in early 2022. Its story provides critical lessons for post-quantum cryptographic design and evaluation.
+
+**Figure 8.2 — Why Rainbow layers leaked structure (2022)**
+
+```mermaid
+flowchart TD
+  LAY[Layered OV] --> REL[Inter-layer relations]
+  REL --> ATK[Beullens key recovery]
+```
+
+*Figure 8.2 is the lesson: extra layers for efficiency created algebraically exploitable structure.*
 
 ### Construction
 

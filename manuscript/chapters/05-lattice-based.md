@@ -2,18 +2,6 @@
 
 Lattices won NIST for good reason; we explain **why Module-LWE is the workhorse** without drowning you in geometry.
 
-**Figure 5.1 — LWE encryption intuition**
-
-```mermaid
-flowchart LR
-  SK[Secret s] --> PK[t = As + e]
-  MSG[Message m] --> CT[ciphertext noisy]
-  PK --> CT
-  SK --> DEC[Decrypt round]
-```
-
----
-
 ## 5.1 Introduction to Lattices
 
 ### Formal Definitions
@@ -76,15 +64,19 @@ The LWE problem can be reformulated as a problem on q-ary lattices: given an LWE
 Ajtai's seminal 1996 work showed that random q-ary lattices enjoy remarkable average-case hardness properties: solving SIS (and thus SVP) on a randomly chosen q-ary lattice is at least as hard as solving worst-case lattice problems on any lattice of the same dimension. This worst-case to average-case connection is unique among cryptographic assumptions — most other assumptions (factoring, discrete logarithm) are average-case statements without worst-case backing.
 
 
-**Figure 5.2 — Module-LWE module view**
+## 5.2 Hard Lattice Problems
+
+**Figure 5.1 — LWE public-key formation**
 
 ```mermaid
-flowchart TB
-  Rq[Ring R_q] --> Mod[Module rank k]
-  Mod --> MLKEM[ML-KEM / ML-DSA]
+flowchart LR
+  s[Secret s] --> t[t = As + e]
+  A[Public A] --> t
+  t --> pk[Public key]
 ```
 
-## 5.2 Hard Lattice Problems
+*Figure 5.1 is the mental model for ML-KEM key generation: noisy linear structure hides the secret.*
+
 
 ### Shortest Vector Problem (SVP)
 
@@ -202,6 +194,19 @@ The consensus view is that Module-LWE with k >= 2 offers security substantially 
 Analogous to Module-LWE, the **Module-SIS** problem asks: given a random matrix A in R_q^(k x l), find a short non-zero vector x in R_q^l such that A*x = 0 mod q and all coefficients of x are bounded. Module-SIS underlies the security of lattice-based signature schemes like ML-DSA, where the signer must produce short preimages under modular linear maps over polynomial rings. The relationship between Module-SIS and Module-LWE mirrors that between SIS and LWE in the unstructured setting — they are "dual" problems that together support the full range of basic cryptographic primitives.
 
 ## 5.4 Lattice-Based Encryption: The Regev/LPR Framework
+
+**Figure 5.2 — Module rank k in ML-KEM**
+
+```mermaid
+flowchart TB
+  Rq[Ring Z_q[X]/(X^256+1)] --> Mod[Module dimension k]
+  Mod --> K512[k=2 ML-KEM-512]
+  Mod --> K768[k=3 ML-KEM-768]
+  Mod --> K1024[k=4 ML-KEM-1024]
+```
+
+*Figure 5.2: increasing module rank k raises dimension without changing the ring R_q.*
+
 
 ### Regev's Original Encryption Scheme
 

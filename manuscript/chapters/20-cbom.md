@@ -2,17 +2,6 @@
 
 If you cannot list your algorithms, you cannot claim PQC readiness—CBOM is the **bill of health** for crypto debt.
 
-**Figure 20.1 — CBOM data model**
-
-```mermaid
-flowchart TB
-  APP[Application] --> LIB[Crypto library]
-  LIB --> ALG[Algorithms + params]
-  ALG --> QV[Quantum vulnerability flag]
-```
-
----
-
 ## 20.1 What Is a CBOM?
 
 A **Cryptographic Bill of Materials (CBOM)** is a structured, machine-readable inventory of all cryptographic assets, dependencies, configurations, and implementations within a system, application, or organization. It answers the fundamental question that most organizations cannot today: "What cryptography are we using, where is it deployed, how is it configured, and what is its quantum vulnerability status?"
@@ -54,18 +43,20 @@ Before CBOM emerged as a discipline, organizations attempted to track cryptograp
 CBOM addresses all of these limitations through automation, standardization, and continuous maintenance — principles borrowed from the SBOM world but adapted for the unique characteristics of cryptographic assets.
 
 
-**Figure 20.2 — CBOM in CI/CD**
-
-```mermaid
-flowchart LR
-  Build[Build pipeline] --> SBOM[SBOM]
-  SBOM --> CBOM[CBOM scan]
-  CBOM --> Gate[Release gate]
-```
-
 ## 20.2 Why CBOM Matters for PQC Migration
 
 The post-quantum cryptography transition represents the largest coordinated change to cryptographic infrastructure in the history of computing. Every RSA key, every ECDSA signature, every ECDH key exchange across the global technology stack must eventually be replaced or supplemented. Without comprehensive visibility into what currently exists, this transition cannot succeed.
+
+**Figure 20.1 — CBOM entity model**
+
+```mermaid
+flowchart TB
+  SVC[Service] --> LIB[Crypto library v]
+  LIB --> ALG[Algorithm + params]
+  ALG --> Q[Quantum-vulnerable flag]
+```
+
+*Figure 20.1 is the schema teams export to GRC tools.*
 
 ### Visibility: Seeing the Full Picture
 
@@ -413,6 +404,19 @@ The most effective CBOM programs combine all four methods to maximize coverage a
 Cross-referencing findings across methods provides confidence: if static analysis shows RSA-2048 in the source code, and network analysis confirms RSA-2048 in TLS handshakes, and configuration shows RSA-2048 in the certificate, the finding is validated from multiple angles.
 
 ## 20.5 Building and Maintaining a CBOM
+
+**Figure 20.2 — CBOM in CI/CD gate**
+
+```mermaid
+flowchart LR
+  BUILD[Build] --> SCAN[CBOM scan]
+  SCAN --> GATE{Policy pass?}
+  GATE -->|yes| REL[Release]
+  GATE -->|no| FAIL[Block]
+```
+
+*Figure 20.2 shows how CBOM blocks releases when RSA persists on HNDL paths.*
+
 
 ### Phase 1: Scope Definition
 

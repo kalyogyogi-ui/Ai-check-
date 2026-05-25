@@ -2,23 +2,22 @@
 
 This is the **kill chain** chapter: which algorithms die, which shrink security margins, and what you must replace first.
 
-**Figure 3.1 — Attack map to primitives**
-
-```mermaid
-flowchart TD
-  Shor[Shor polynomial time] --> RSA[RSA factoring]
-  Shor --> DLP[Finite-field DLP]
-  Shor --> ECDLP[ECDLP]
-  Grover[Grover sqrt speedup] --> SYM[Symmetric keys halved effective bits]
-```
-
----
-
 Classical hardness assumptions are the contract we have been living under—Shor voids that contract for public-key systems.
 
 ## 3.1 The Foundation of Classical Cryptographic Security
 
 Modern cryptography does not rely on secrecy of algorithms. Instead, it rests on a fundamentally different pillar: the assumption that certain mathematical problems are computationally intractable for any classical computer, regardless of the ingenuity of the attacker. This is a subtle but critical distinction. We do not claim these problems are impossible to solve — only that solving them requires resources (time, memory, energy) that exceed what any adversary could plausibly muster within a meaningful timeframe.
+
+**Figure 3.1 — Classical hard problems → deployed crypto**
+
+```mermaid
+flowchart LR
+  IFP[Integer factorization] --> RSA[RSA]
+  DLP[Finite-field DLP] --> DH[DH DSA]
+  ECDLP[ECDLP] --> ECC[ECDH ECDSA]
+```
+
+*Figure 3.1 links IFP, DLP, and ECDLP to the protocols you must replace.*
 
 This entire framework is built on unproven assumptions. No one has ever proven that integer factorization or discrete logarithm computation is inherently hard. We have no proof that P does not equal NP. What we have instead is decades of empirical evidence: generations of brilliant mathematicians and computer scientists have tried — and failed — to find efficient algorithms for these problems. This accumulated failure constitutes our evidence of security, and it has served us remarkably well for over four decades.
 
@@ -51,17 +50,19 @@ For forty years, this approach has proven extraordinarily successful. Despite en
 > **Author's note:** Treat Shor-vulnerable keys as **expired** once CRQC exists—plan backward from data lifetime.
 
 
-**Figure 3.2 — Grover impact on AES**
-
-```mermaid
-flowchart LR
-  AES256[AES-256] --> Eff128[Effective ~128-bit quantum margin]
-  AES128[AES-128] --> Eff64[Effective ~64-bit — inadequate]
-```
-
 ## 3.2 Shor's Algorithm: The Quantum Threat to Public-Key Cryptography
 
 In 1994, Peter Shor, working at Bell Labs, published a quantum algorithm that solves both integer factorization and discrete logarithm in polynomial time. This single paper represents perhaps the most consequential algorithmic discovery in the history of computer science — not because of what it enables constructively, but because of what it destroys. Shor's algorithm renders the entire foundation of public-key cryptography obsolete, given a sufficiently powerful quantum computer.
+
+**Figure 3.2 — Shor pipeline (high level)**
+
+```mermaid
+flowchart LR
+  P[Period finding QFT] --> F[Factor / DLP / ECDLP]
+  F --> B[Break RSA DH ECC]
+```
+
+*Figure 3.2 is the path from period finding to broken public-key trust.*
 
 ### Conceptual Foundation: Period Finding
 
@@ -189,6 +190,16 @@ This affects every system using ECDH for key exchange, ECDSA or EdDSA for digita
 ## 3.3 Grover's Algorithm: The Quadratic Speedup
 
 In 1996, Lov Grover published a quantum algorithm for unstructured search that achieves a quadratic speedup over any classical algorithm. Unlike Shor's algorithm, which provides an exponential speedup for structured algebraic problems, Grover's provides a more modest — but still significant — quadratic improvement for generic search problems. Crucially, this quadratic speedup has been proven optimal: no quantum algorithm can search an unstructured database faster than O(sqrt(N)).
+
+**Figure 3.3 — Grover impact on symmetric keys**
+
+```mermaid
+flowchart LR
+  AES128[AES-128] --> G128[~64-bit quantum margin]
+  AES256[AES-256] --> G256[~128-bit quantum margin]
+```
+
+*Figure 3.3 drives AES-256 policy: Grover halves effective key strength in the quantum query model.*
 
 ### The Search Problem
 

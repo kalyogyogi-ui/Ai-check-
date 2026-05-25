@@ -2,33 +2,40 @@
 
 We frame the quantum threat as a **migration and liability** problem for Indian and global digital infrastructure—not a science-fair project.
 
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
-
-**Figure 1.1 — Stack at risk under Shor and Grover**
-
-```mermaid
-flowchart TB
-  subgraph vuln [Quantum-vulnerable today]
-    RSA[RSA]
-    DH[DH / ECDH / ECDSA]
-  end
-  subgraph ok [Adjust strength only]
-    AES[AES / ChaCha]
-    SHA[SHA-2 / SHA-3]
-  end
-  TLS[TLS / SSH / VPN] --> vuln
-  TLS --> ok
-```
-
----
-
 We begin with the societal layer because boards fund **risk stories**, not polynomial rings.
 
 ## 1.1 The Role of Cryptography in Modern Society
 
 If you run security for a bank, a telco, or a government technology unit in India, you already live inside cryptography whether or not you employ cryptographers. Every `https` session, every software update signature, every VPN into a data centre, and every API token that gates a microservice assumes someone chose algorithms, key lengths, and rotation policies that still look sane five years from now. Our job in this chapter is to name what those choices are today—and which of them quantum computers eventually void.
 
-**Figure 1.1 (above)** is the map we reuse in architecture reviews: Shor's algorithm does not "weaken" RSA or elliptic-curve Diffie–Hellman—it removes the confidentiality and authentication guarantees those primitives were designed to provide, once a cryptographically relevant quantum computer (CRQC) exists. Grover's algorithm is different: it shrinks the effective strength of symmetric keys and hashes, which we answer by doubling key sizes, not by replacing AES.
+**Figure 1.1 — Cryptographic trust stack under quantum attack**
+
+```mermaid
+flowchart TB
+  subgraph apps [Application layer]
+    WEB[HTTPS / APIs]
+    VPN[VPN / ZTNA]
+    SIGN[Code & firmware signing]
+  end
+  subgraph proto [Protocol layer]
+    TLS[TLS 1.2/1.3]
+    SSH[SSH / IPsec]
+  end
+  subgraph pk [Public-key — broken by Shor at scale]
+    RSA[RSA encrypt/sign]
+    ECC[ECDH ECDSA EdDSA]
+  end
+  subgraph sym [Symmetric / hash — Grover halves margin]
+    AEAD[AES-GCM ChaCha20]
+    HASH[SHA-2 SHA-3]
+  end
+  apps --> proto --> pk
+  proto --> sym
+```
+
+*Figure 1.1 summarizes which layers Shor and Grover affect; we use it in every architecture review.*
+
+Figure 1.1 is the map we reuse in architecture reviews: Shor's algorithm does not "weaken" RSA or elliptic-curve Diffie–Hellman—it removes the confidentiality and authentication guarantees those primitives were designed to provide, once a cryptographically relevant quantum computer (CRQC) exists. Grover's algorithm is different: it shrinks the effective strength of symmetric keys and hashes, which we answer by doubling key sizes, not by replacing AES.
 
 When you open a site over TLS 1.3, the visible lock icon hides a negotiation most teams never instrument: the server authenticates with a certificate (today, usually RSA or ECDSA), the session keys are derived from a key exchange (today, often X25519 or P-256 ECDH), and only then does AES-GCM or ChaCha20-Poly1305 protect bulk data. In Indian payment and identity ecosystems, the same pattern appears inside API gateways, hardware security modules, and legacy middleware that still terminates TLS on RSA-2048. None of that is invisible to a patient recorder of ciphertext.
 
@@ -106,26 +113,28 @@ This error correction overhead is why estimates for cryptographically relevant m
 
 Despite these formidable engineering hurdles, the trajectory is clear. Error rates have improved by roughly an order of magnitude every few years across multiple platforms. Qubit counts have grown exponentially. New error correction codes — particularly quantum Low-Density Parity-Check (LDPC) codes — promise to dramatically reduce the physical-to-logical qubit ratio, potentially by factors of 10 or more compared to the surface code. Each individual improvement in error rates, qubit counts, connectivity, or error correction efficiency compounds, accelerating the timeline toward cryptographic relevance.
 
-> **Author's note:** HNDL is the budget unlocker—archived TLS matters for years.
-
-> **Author's note:** HNDL is the budget unlocker—archived TLS still matters years later.
-
-
-
-**Figure 1.2 — HNDL timeline (author view)**
-
-```mermaid
-sequenceDiagram
-  participant Attacker
-  participant Network
-  Attacker->>Network: Record ciphertext today
-  Note over Attacker: Store years
-  Attacker->>Attacker: Decrypt when CRQC exists
-```
-
 ## 1.4 The "Harvest Now, Decrypt Later" Threat
 
 Perhaps the most urgent and underappreciated aspect of the quantum threat is the "Harvest Now, Decrypt Later" (HNDL) attack model, also sometimes called "store now, decrypt later" or "retrospective decryption." This concept fundamentally changes the timeline of quantum risk from a future concern to a present emergency.
+
+> **Author's note:** HNDL is the budget unlocker—archived TLS still matters years later. Budget for hybrid KEX on long-retention paths first.
+
+**Figure 1.2 — Harvest now, decrypt later (HNDL)**
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant A as Adversary
+  participant N as Network tap
+  participant S as Storage
+  A->>N: Record TLS/IPsec ciphertext
+  N->>S: Archive years cheaply
+  Note over A,S: No decryption today
+  A->>A: Later: CRQC + Shor
+  A->>S: Retrospective decrypt
+```
+
+*Figure 1.2 is the threat model we use when arguing for hybrid KEX before CRQC exists.*
 
 The HNDL attack operates on a simple but devastating logic: adversaries intercept and store encrypted communications today, while they are computationally protected by current cryptographic algorithms. These communications remain indecipherable using today's computing resources. However, the adversaries store the captured ciphertext indefinitely — storage is cheap and getting cheaper. When quantum computers capable of running Shor's algorithm at cryptographic scale eventually become available, the adversaries retrieve their stored ciphertexts and decrypt them, exposing secrets that may still be sensitive years or decades after their original transmission.
 
@@ -177,6 +186,19 @@ Even using moderate estimates, x + y (20-65 years) likely exceeds z (10-20 years
 ## 1.5 Defining the Quantum Threat Timeline
 
 The question of when a cryptographically relevant quantum computer (CRQC) will exist is perhaps the most important — and most uncertain — question in modern technology risk assessment. The answer determines the urgency of PQC migration, the allocation of resources, and the acceptable level of residual risk during transition.
+
+**Figure 1.3 — Mosca inequality (planning)**
+
+```mermaid
+flowchart LR
+  x[x: confidentiality years] --> Q{x + y > z ?}
+  y[y: migration years] --> Q
+  z[z: CRQC horizon] --> Q
+  Q -->|yes| R[At risk now]
+  Q -->|no| OK[Window remains]
+```
+
+*Use Figure 1.3 when prioritizing systems: if x + y > z, migration is already late for that data class.*
 
 ### Expert Estimates and Surveys
 

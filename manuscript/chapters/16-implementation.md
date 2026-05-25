@@ -2,19 +2,6 @@
 
 Theory is IND-CCA; production is **constant-time or bust**. We have seen lattice leaks from careless NTT loops.
 
-**Figure 16.1 — Implementation threat model**
-
-```mermaid
-flowchart TD
-  CODE[Crypto code] --> TIME[Timing cache]
-  CODE --> POWER[Power EM]
-  LEAK[Leak bits] --> LATTICE[Lattice recovery]
-  TIME --> LEAK
-  POWER --> LEAK
-```
-
----
-
 Every PQC proof we trust still fails when a single branch leaks key bits—implementation is the real battlefield.
 
 ## 16.1 The Implementation Gap
@@ -40,6 +27,20 @@ The consequence is clear: implementing post-quantum cryptography securely requir
 > **Author's note:** We block lattice KEM releases without constant-time NTT—non-negotiable in our reviews.
 
 ## 16.2 Constant-Time Programming
+
+**Figure 16.1 — Side-channel attack surfaces**
+
+```mermaid
+flowchart TD
+  CODE[Crypto implementation] --> T[Timing cache]
+  CODE --> P[Power EM]
+  T --> LEAK[Partial key bits]
+  P --> LEAK
+  LEAK --> LAT[Lattice recovery]
+```
+
+*Figure 16.1 is our implementation review checklist—timing before algebra.*
+
 
 ### Why Constant-Time Matters
 
@@ -401,6 +402,17 @@ uint16_t gather_constant_time(const uint16_t *scattered, size_t n,
 Alternatively, eliminate tables entirely by computing values inline using arithmetic operations. For ML-KEM's small modulus (q = 3329), twiddle factors can be computed on the fly using Barrett reduction rather than looked up from a table, trading computation time for cache-timing resistance.
 
 ## 16.4 Masking Countermeasures
+
+**Figure 16.2 — Constant-time selection pattern**
+
+```mermaid
+flowchart LR
+  BR[Secret branch] --> BAD[Leak via cache]
+  CT[ct_select mask] --> OK[Data-independent access]
+```
+
+*Figure 16.2: replace secret branches with cmov-style selects.*
+
 
 ### Boolean Masking
 

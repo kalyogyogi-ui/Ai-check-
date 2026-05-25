@@ -2,17 +2,6 @@
 
 SIDH taught us that **published torsion can be lethal**; we document survivors and label them experimental.
 
-**Figure 9.1 — SIDH break lesson (conceptual)**
-
-```mermaid
-flowchart TD
-  PUB[Publish auxiliary torsion] --> ATT[Castryck-Decru 2022]
-  ATT --> DEAD[SIDH/SIKE broken]
-  CSIDH[CSIDH: no torsion leak] --> OPEN[Still debated quantum cost]
-```
-
----
-
 ## 9.1 Elliptic Curves and Isogenies
 
 Isogeny-based cryptography occupies a unique position in the post-quantum landscape. While lattice and code-based schemes dominate standardization efforts, isogeny-based constructions offer unmatched compactness—public keys and signatures measured in tens of bytes rather than kilobytes. This chapter traces the mathematical foundations, the dramatic rise and fall of SIDH/SIKE, the surviving constructions, and the current state of this rapidly evolving field.
@@ -76,14 +65,6 @@ The structure of the isogeny graph depends dramatically on whether we restrict t
 - The structure is determined by the factorization of the ideal (ℓ) in the endomorphism ring.
 - This regular structure is used in CSIDH, where the class group action follows horizontal paths on the volcano.
 
-
-**Figure 9.2 — Post-SIDH landscape**
-
-```mermaid
-flowchart LR
-  SIDH[Broken SIDH/SIKE] --> CSIDH[CSIDH research]
-  CSIDH --> SQISign[SQISign signatures]
-```
 
 ## 9.2 Supersingular vs. Ordinary Curves
 
@@ -155,6 +136,17 @@ An important subtlety in the design of isogeny-based schemes is the field of def
 Working over F_p (CSIDH) enables simpler arithmetic, commutativity of the group action, and smaller field representations, but provides a smaller keyspace and vulnerability to Kuperberg's algorithm through the commutative structure. Working over F_{p²} (SIDH, SQISign) enables a larger keyspace with stronger security assumptions and richer algebraic structure through quaternion algebras, but requires more expensive field arithmetic and confronts the challenges of non-commutativity.
 
 ## 9.3 Hard Problems in Isogeny-Based Cryptography
+
+**Figure 9.1 — SIDH auxiliary torsion → break**
+
+```mermaid
+flowchart TD
+  PUB[Publish torsion images] --> CD[Castryck-Decru]
+  CD --> BR[Polynomial-time break]
+```
+
+*Figure 9.1 documents why publishing torsion images was fatal to SIDH/SIKE.*
+
 
 ### The Supersingular Isogeny Problem
 
@@ -326,6 +318,20 @@ The SIDH/SIKE break carries profound lessons for post-quantum cryptography:
 5. **The importance of diverse approaches:** The SIDH break did not affect CSIDH (which publishes no auxiliary points) or SQISign (which uses a fundamentally different paradigm), illustrating the value of maintaining multiple approaches within a cryptographic family.
 
 ## 9.5 CSIDH: Commutative Group Actions
+
+After SIDH/SIKE, research focused on schemes that avoid publishing dangerous torsion information. **Figure 9.2** maps the post-SIDH landscape—treat these as **research**, not procurement defaults.
+
+**Figure 9.2 — Post-SIDH research map**
+
+```mermaid
+flowchart LR
+  SIDH[Broken SIDH] --> CSIDH[CSIDH eval]
+  CSIDH --> SQI[SQISign research]
+```
+
+*Figure 9.2: treat CSIDH/SQISign as **research**, not procurement defaults.*
+
+### Construction
 
 ### Construction
 

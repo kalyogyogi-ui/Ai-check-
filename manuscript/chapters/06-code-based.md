@@ -2,17 +2,6 @@
 
 McEliece is the **conservative safe** in the room—huge keys, old confidence. We use it when policy demands assumption diversity.
 
-**Figure 6.1 — McEliece encode/decode roles**
-
-```mermaid
-flowchart LR
-  E[Error vector e] --> SYN[s = He]
-  PK[Public H] --> ENC[Syndrome / ciphertext]
-  SK[Trapdoor Goppa] --> DEC[Decode]
-```
-
----
-
 ## 6.1 Error-Correcting Codes: Background
 
 Error-correcting codes were originally developed by Claude Shannon, Richard Hamming, and others in the late 1940s and 1950s to enable reliable communication over noisy channels. The fundamental idea is to introduce structured redundancy into transmitted messages so that errors introduced during transmission can be detected and corrected by the receiver. This mathematical framework, developed for communications engineering, turns out to provide precisely the right abstraction for building cryptographic systems resistant to quantum attacks.
@@ -69,6 +58,18 @@ The crucial property of Goppa codes for cryptography is that they are indistingu
 ## 6.2 The McEliece Cryptosystem
 
 Robert McEliece proposed his public-key encryption system at the 1978 IEEE International Symposium on Information Theory. The system was revolutionary in its approach: rather than relying on number-theoretic problems like factoring or discrete logarithms, it drew its security from the computational difficulty of decoding general linear codes. Despite receiving less attention than RSA in the following decades due to its large key sizes, the McEliece system has proven remarkably resistant to cryptanalysis.
+
+**Figure 6.1 — McEliece: syndrome as ciphertext**
+
+```mermaid
+flowchart LR
+  e[Small error e] --> s[s = He]
+  H[Public H] --> s
+  s --> ct[Ciphertext]
+  trap[Goppa trapdoor] --> dec[Decode]
+```
+
+*Figure 6.1 shows why decryption is easy with the Goppa trapdoor but hard without it.*
 
 ### Construction
 

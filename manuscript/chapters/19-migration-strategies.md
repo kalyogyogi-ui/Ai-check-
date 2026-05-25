@@ -2,20 +2,6 @@
 
 Migration is a **program**, not a library upgrade. We sequence discover → pilot → mandate → retire.
 
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
-
-**Figure 19.1 — Migration program phases**
-
-```mermaid
-flowchart LR
-  D[Discover] --> P[Prioritize HNDL]
-  P --> I[Pilot hybrid]
-  I --> S[Scale]
-  S --> R[Retire RSA ECC]
-```
-
----
-
 ## 19.1 The Scale of the Challenge
 
 To appreciate the magnitude of this transition, consider what must change:
@@ -35,15 +21,20 @@ Yet the transition is achievable. It has already begun, with major deployments o
 > **Author's note:** Agility means **ops can change algorithms** without a monolith redeploy.
 
 
-**Figure 19.2 — CBOM-driven migration**
+## 19.2 Cryptographic Agility
+
+**Figure 19.1 — Enterprise migration phases**
 
 ```mermaid
 flowchart LR
-  CBOM[CBOM inventory] --> RISK[Risk score]
-  RISK --> ROAD[Roadmap]
+  D[Discover CBOM] --> P[Prioritize HNDL]
+  P --> I[Pilot hybrid]
+  I --> S[Scale]
+  S --> R[Retire classical PK]
 ```
 
-## 19.2 Cryptographic Agility
+*Figure 19.1 is the program plan we map to steering committees.*
+
 
 ### Definition and Importance
 
@@ -214,6 +205,17 @@ The prioritization must also account for dependencies: a lower-priority system t
 ## 19.4 Cryptographic Inventory
 
 The cryptographic inventory is the foundation of any migration effort. Without a comprehensive understanding of what cryptography is in use, where, and why, migration planning is guesswork.
+
+**Figure 19.2 — Cryptographic agility architecture**
+
+```mermaid
+flowchart TB
+  APP[Application] --> API[crypto_* API]
+  API --> CFG[Policy config]
+  CFG --> LIB[liboqs/provider]
+```
+
+*Figure 19.2: agility is an API/config layer, not a one-off library swap.*
 
 ### What to Inventory
 

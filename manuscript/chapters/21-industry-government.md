@@ -2,22 +2,20 @@
 
 Policy sets deadlines; **your stack sets feasibility**. We map global mandates and India's parallel track.
 
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
+## 21.1 Government Programs and Mandates
+
+Governments worldwide have recognized that the quantum threat to cryptographic infrastructure requires coordinated, mandated action. Unlike many cybersecurity improvements that can be left to market forces, PQC migration involves a tight timeline, massive coordination requirements, and national security implications that demand government leadership. This section surveys the major government programs driving PQC adoption.
 
 **Figure 21.1 — Policy → engineering feedback loop**
 
 ```mermaid
 flowchart LR
-  POL[NIST FIPS / CNSA / EU] --> PROC[Procurement]
-  PROC --> ENG[Engineering CBOM]
-  ENG --> AUDIT[Audit evidence]
+  POL[Policy NIST/CNSA/EU] --> PROC[Procurement]
+  PROC --> ENG[Engineering CBOM + tests]
+  ENG --> AUD[Audit evidence]
 ```
 
----
-
-## 21.1 Government Programs and Mandates
-
-Governments worldwide have recognized that the quantum threat to cryptographic infrastructure requires coordinated, mandated action. Unlike many cybersecurity improvements that can be left to market forces, PQC migration involves a tight timeline, massive coordination requirements, and national security implications that demand government leadership. This section surveys the major government programs driving PQC adoption.
+*Figure 21.1 links regulation to measurable engineering artifacts—not slide decks.*
 
 ### United States
 
@@ -222,6 +220,21 @@ China's approach to PQC combines elements of independent development with select
 > **Author's note:** Align engineering to **both** NIST timelines and India's NQM/RBI/NCIIPC tracks—not either-or.
 
 **India (NCIIPC and MeitY):**
+
+India's PQC path runs in parallel with NIST: National Quantum Mission funding, sector guidance from NCIIPC, and RBI operational risk for payment rails. **Figure 21.2** maps the stakeholders we see in every domestic readiness workshop.
+
+**Figure 21.2 — India PQC stakeholder map**
+
+```mermaid
+flowchart TB
+  MeitY[MeitY / National Quantum Mission] --> Sect[CERT-In sector programs]
+  RBI[RBI payment system risk] --> Banks[Banks / UPI ecosystem]
+  NCIIPC[NCIIPC CII guidance] --> OPS[Critical infrastructure operators]
+  STQC[STQC product testing] --> Vendors[Certified vendors]
+  Academia[IIT ISI IISc] --> Research[PQC analysis + talent]
+```
+
+*Figure 21.2 is the India-specific overlay—verify each box against the latest MeitY/RBI circular.*
 
 - National Quantum Mission (2023, ₹6,003 crore / ~$730M) includes cryptographic security as a key deliverable
 - NCIIPC (National Critical Information Infrastructure Protection Centre) developing PQC guidelines for India's critical sectors

@@ -2,31 +2,6 @@
 
 We walk ML-KEM the way implementers need: **K-PKE, FO transform, implicit rejection**—with constant-time warnings baked in.
 
-**Figure 11.1 — ML-KEM-768 object sizes (typical deployment)**
-
-| Object | Bytes (ML-KEM-768) | Role |
-|--------|-------------------:|------|
-| Public key `ek` | 1,184 | Long-lived; in cert extensions / config |
-| Secret key `dk` | 2,400 | HSM-protected; never logged |
-| Ciphertext `c` | 1,088 | Per-handshake on the wire |
-| Shared secret | 32 | Feeds HKDF → AES-GCM |
-
-```mermaid
-sequenceDiagram
-  participant S as Sender encaps
-  participant R as Receiver decaps
-  S->>R: ciphertext c (1088 B)
-  R->>R: m' from v - s^T u
-  R->>R: re-encrypt FO check
-  alt valid c
-    R-->>S: KDF(K', H(c))
-  else invalid c
-    R-->>S: KDF(z, H(c)) implicit reject
-  end
-```
-
----
-
 > **Author's note:** Implement ML-KEM from **FIPS 203 PDF + ACVP test vectors**, not from memory of the Kyber submission. Parameter sets (512/768/1024) are not interchangeable—your TLS profile must name the exact set.
 
 ## 11.1 Overview
@@ -49,14 +24,6 @@ ML-KEM embodies a design philosophy that prioritizes implementation simplicity a
 
 **Implicit rejection.** Rather than signaling decapsulation failure explicitly, ML-KEM returns a pseudorandom value for invalid ciphertexts, preventing entire classes of oracle attacks.
 
-
-**Figure 11.2 — FO transform wrapper**
-
-```mermaid
-flowchart LR
-  CPA[K-PKE IND-CPA] --> FO[FO transform]
-  FO --> CCA[ML-KEM IND-CCA2]
-```
 
 ## 11.2 Mathematical Foundation
 
@@ -133,6 +100,21 @@ These operations are highly parallelizable and map naturally to SIMD instruction
 **Domain strategy.** ML-KEM stores the public matrix **Â** and secret vector **ŝ** permanently in NTT domain. This avoids redundant transformations: key generation computes **t̂** = **Â**·**ŝ** + **ê** directly in NTT domain; encapsulation multiplies by **Â** without ever computing inverse NTTs for the matrix. Only the final ciphertext construction and decryption steps require inverse NTTs.
 
 ## 11.3 Parameter Sets
+
+ML-KEM defines three parameter sets targeting NIST security levels 1, 3, and 5. **Figure 11.1** lists the on-the-wire object sizes for the profile most teams deploy first (ML-KEM-768).
+
+**Figure 11.1 — ML-KEM-768 object sizes (wire format)**
+
+| Object | Bytes (ML-KEM-768) | Notes |
+|--------|-------------------:|-------|
+| `ek` (public key) | 1,184 | Often in ClientHello key_share |
+| `dk` (secret key) | 2,400 | HSM-only; never log |
+| `c` (ciphertext) | 1,088 | Server → client in hybrid KEX |
+| Shared secret | 32 | Input to HKDF with classical ss |
+
+*Size budget for hybrid TLS lives in Figure 11.1—account for key_share growth on mobile paths.*
+
+### Parameter set comparison
 
 ML-KEM defines three parameter sets targeting NIST security levels 1, 3, and 5:
 
@@ -283,6 +265,20 @@ Steps 9-12 implement the implicit rejection mechanism: invalid ciphertexts produ
 **Why re-encryption is necessary:** Without the re-encryption check, an adversary could submit malformed ciphertexts to a decapsulation oracle and learn information about the secret key from the responses. The re-encryption check makes ML-KEM a "check-then-use" construction: the shared secret is only released if the ciphertext is provably well-formed under the derived randomness.
 
 ## 11.5 Security Mechanisms
+
+**Figure 11.2 — IND-CCA2 via Fujisaki–Okamoto (implicit rejection)**
+
+```mermaid
+flowchart TD
+  IN[ciphertext c] --> DEC[Decrypt m']
+  DEC --> RE[Re-encrypt c']
+  RE --> CMP{c == c' ?}
+  CMP -->|yes| K1[KDF K' || H(c)]
+  CMP -->|no| K2[KDF z || H(c) pseudorandom]
+```
+
+*Figure 11.2 is the decapsulation path your implementation must match byte-for-byte in tests.*
+
 
 ### IND-CCA2 Security via the Fujisaki-Okamoto Transform
 

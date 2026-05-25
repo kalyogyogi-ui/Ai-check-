@@ -2,17 +2,6 @@
 
 Hash signatures trade size for **minimal assumptions**—excellent for roots of trust if you respect state.
 
-**Figure 7.1 — Merkle tree signature flow**
-
-```mermaid
-flowchart TB
-  OTS[One-time keys leaves] --> TREE[Merkle root in pubkey]
-  SIGN[Sign with leaf OTS] --> PROOF[Auth path]
-  PROOF --> VERIFY[Verify to root]
-```
-
----
-
 ## 7.1 The Appeal of Hash-Based Cryptography
 
 Among the families of post-quantum cryptographic schemes, hash-based signatures occupy a philosophically distinctive position. Their security relies on what cryptographers consider the **minimal possible assumption**: the existence of a secure hash function. There are no hidden algebraic structures to exploit, no lattice problems whose hardness might one day be undermined by clever algorithms, and no error-correcting codes whose parameters might prove insufficiently conservative. The entire security argument reduces to the one-wayness, second preimage resistance, and collision resistance of a well-studied hash function.
@@ -32,17 +21,20 @@ The concrete benefits of hash-based security assumptions include:
 The trade-offs, however, are significant. Hash-based signatures typically produce larger signatures than lattice-based alternatives: SLH-DSA signatures range from approximately 8 KB to 50 KB, compared to 2.4 KB for ML-DSA at comparable security levels. Signing and verification operations require hundreds or thousands of hash function evaluations, making them slower in absolute terms, though still practical for most applications. Key generation for stateful schemes can also be expensive when large trees must be constructed upfront. These trade-offs make hash-based signatures a complement to lattice-based approaches rather than a replacement: they serve as the conservative fallback when maximum security confidence outweighs performance concerns.
 
 
-**Figure 7.2 — Stateful vs stateless deployment**
-
-```mermaid
-flowchart LR
-  XMSS[XMSS/LMS stateful] --> FW[Firmware trust anchors]
-  SLH[SLH-DSA stateless] --> TLS[General signatures]
-```
-
 ## 7.2 One-Time Signatures: The Building Block
 
 The entire edifice of hash-based cryptography rests on a deceptively simple foundation: the one-time signature (OTS). A one-time signature scheme allows a signer to produce exactly one signature under a given key pair. If the key pair is reused, the scheme's security guarantees evaporate. While this seems like an absurd limitation, it turns out that one-time signatures can be constructed from hash functions alone with extraordinary efficiency, and the limitation can be managed through tree-based key management structures described in later sections.
+
+**Figure 7.1 — Merkle tree one-time signature flow**
+
+```mermaid
+flowchart TB
+  OTS[OTS key at leaf] --> SIG[Sign message]
+  SIG --> PATH[Auth path to root]
+  PATH --> ROOT[Root in public key]
+```
+
+*Figure 7.1 underpins XMSS/LMS and the hypertrees inside SLH-DSA.*
 
 ### Lamport Signatures (1979)
 
@@ -143,6 +135,16 @@ For the parameters used in SLH-DSA-128f (k = 33, a = 6), even after 2^10 signatu
 ## 7.4 Merkle Trees: Managing Many Keys
 
 The fundamental limitation of one-time and few-time signatures — that they can sign only a limited number of messages — must be overcome for practical use. Ralph Merkle's brilliant insight in 1979 was that a binary hash tree could aggregate an exponential number of one-time key pairs under a single compact public key, with verification requiring only a logarithmic-length proof.
+
+**Figure 7.2 — Stateful vs stateless deployment**
+
+```mermaid
+flowchart LR
+  XMSS[XMSS/LMS] --> HSM[Must store index]
+  SLH[SLH-DSA] --> STATELESS[No index in HSM]
+```
+
+*Figure 7.2 drives HSM requirements: stateful schemes need persistent index storage.*
 
 ### Construction
 

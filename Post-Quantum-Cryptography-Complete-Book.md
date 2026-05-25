@@ -2,7 +2,7 @@
 
 ## Securing Digital Infrastructure Beyond the Quantum Threat Model
 
-*Complete manuscript (revised edition) — single-file export. Chapters 1–22 and Appendices A–D.*
+*Figures are placed inside the section they support (after the opening paragraph).*
 
 ---
 
@@ -37,75 +37,11 @@ Figures and architecture diagrams appear in every chapter because cryptography i
 
 ## Table of Contents
 
-*Replace bracketed author fields in the preface before publication.*
-
-
-- PART I — FOUNDATIONS
-
-- Chapter 1: Cryptography and the Quantum Threat
-
-- Chapter 2: Quantum Computing Fundamentals
-
-- Chapter 3: Shor's and Grover's Algorithms
-
-- Chapter 4: Overview of Post-Quantum Cryptography
-
-- PART II — CORE POST-QUANTUM ALGORITHMS
-
-- Chapter 5: Lattice-Based Cryptography
-
-- Chapter 6: Code-Based Cryptography
-
-- Chapter 7: Hash-Based Signatures
-
-- Chapter 8: Multivariate Polynomial Cryptography
-
-- Chapter 9: Isogeny-Based Cryptography
-
-- PART III — NIST STANDARDIZATION AND STANDARDS
-
-- Chapter 10: The NIST Post-Quantum Standardization Process
-
-- Chapter 11: FIPS 203 — ML-KEM
-
-- Chapter 12: FIPS 204 — ML-DSA
-
-- Chapter 13: FIPS 205 — SLH-DSA
-
-- Chapter 14: Additional Candidates and Round 4 Algorithms
-
-- PART IV — IMPLEMENTATION AND PRACTICE
-
-- Chapter 15: Hybrid Cryptographic Schemes
-
-- Chapter 16: Implementation and Side-Channel Resistance
-
-- Chapter 17: Performance Analysis and Benchmarking
-
-- Chapter 18: PQC in TLS, PKI, and Network Protocols
-
-- PART V — MIGRATION AND THE FUTURE
-
-- Chapter 19: Cryptographic Agility and Migration Strategies
-
-- Chapter 20: Cryptographic Bill of Materials (CBOM)
-
-- Chapter 21: Industry and Government PQC Initiatives
-
-- Chapter 22: Future Directions and Open Problems
-
-- Appendix A: Mathematical Prerequisites
-
-- Appendix B: Glossary of Terms
-
-- Appendix C: Reference Implementations and Tools
-
-- Appendix D: Further Reading and Resources
-
+See `manuscript/chapters/` and `manuscript/appendices/` for chapter files.
 
 ---
 
----
+*Replace bracketed author fields before publisher submission.*
 
 # PART I — FOUNDATIONS
 
@@ -116,33 +52,40 @@ Figures and architecture diagrams appear in every chapter because cryptography i
 
 We frame the quantum threat as a **migration and liability** problem for Indian and global digital infrastructure—not a science-fair project.
 
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
-
-**Figure 1.1 — Stack at risk under Shor and Grover**
-
-```mermaid
-flowchart TB
-  subgraph vuln [Quantum-vulnerable today]
-    RSA[RSA]
-    DH[DH / ECDH / ECDSA]
-  end
-  subgraph ok [Adjust strength only]
-    AES[AES / ChaCha]
-    SHA[SHA-2 / SHA-3]
-  end
-  TLS[TLS / SSH / VPN] --> vuln
-  TLS --> ok
-```
-
----
-
 We begin with the societal layer because boards fund **risk stories**, not polynomial rings.
 
 ## 1.1 The Role of Cryptography in Modern Society
 
 If you run security for a bank, a telco, or a government technology unit in India, you already live inside cryptography whether or not you employ cryptographers. Every `https` session, every software update signature, every VPN into a data centre, and every API token that gates a microservice assumes someone chose algorithms, key lengths, and rotation policies that still look sane five years from now. Our job in this chapter is to name what those choices are today—and which of them quantum computers eventually void.
 
-**Figure 1.1 (above)** is the map we reuse in architecture reviews: Shor's algorithm does not "weaken" RSA or elliptic-curve Diffie–Hellman—it removes the confidentiality and authentication guarantees those primitives were designed to provide, once a cryptographically relevant quantum computer (CRQC) exists. Grover's algorithm is different: it shrinks the effective strength of symmetric keys and hashes, which we answer by doubling key sizes, not by replacing AES.
+**Figure 1.1 — Cryptographic trust stack under quantum attack**
+
+```mermaid
+flowchart TB
+  subgraph apps [Application layer]
+    WEB[HTTPS / APIs]
+    VPN[VPN / ZTNA]
+    SIGN[Code & firmware signing]
+  end
+  subgraph proto [Protocol layer]
+    TLS[TLS 1.2/1.3]
+    SSH[SSH / IPsec]
+  end
+  subgraph pk [Public-key — broken by Shor at scale]
+    RSA[RSA encrypt/sign]
+    ECC[ECDH ECDSA EdDSA]
+  end
+  subgraph sym [Symmetric / hash — Grover halves margin]
+    AEAD[AES-GCM ChaCha20]
+    HASH[SHA-2 SHA-3]
+  end
+  apps --> proto --> pk
+  proto --> sym
+```
+
+*Figure 1.1 summarizes which layers Shor and Grover affect; we use it in every architecture review.*
+
+Figure 1.1 is the map we reuse in architecture reviews: Shor's algorithm does not "weaken" RSA or elliptic-curve Diffie–Hellman—it removes the confidentiality and authentication guarantees those primitives were designed to provide, once a cryptographically relevant quantum computer (CRQC) exists. Grover's algorithm is different: it shrinks the effective strength of symmetric keys and hashes, which we answer by doubling key sizes, not by replacing AES.
 
 When you open a site over TLS 1.3, the visible lock icon hides a negotiation most teams never instrument: the server authenticates with a certificate (today, usually RSA or ECDSA), the session keys are derived from a key exchange (today, often X25519 or P-256 ECDH), and only then does AES-GCM or ChaCha20-Poly1305 protect bulk data. In Indian payment and identity ecosystems, the same pattern appears inside API gateways, hardware security modules, and legacy middleware that still terminates TLS on RSA-2048. None of that is invisible to a patient recorder of ciphertext.
 
@@ -220,26 +163,28 @@ This error correction overhead is why estimates for cryptographically relevant m
 
 Despite these formidable engineering hurdles, the trajectory is clear. Error rates have improved by roughly an order of magnitude every few years across multiple platforms. Qubit counts have grown exponentially. New error correction codes — particularly quantum Low-Density Parity-Check (LDPC) codes — promise to dramatically reduce the physical-to-logical qubit ratio, potentially by factors of 10 or more compared to the surface code. Each individual improvement in error rates, qubit counts, connectivity, or error correction efficiency compounds, accelerating the timeline toward cryptographic relevance.
 
-> **Author's note:** HNDL is the budget unlocker—archived TLS matters for years.
-
-> **Author's note:** HNDL is the budget unlocker—archived TLS still matters years later.
-
-
-
-**Figure 1.2 — HNDL timeline (author view)**
-
-```mermaid
-sequenceDiagram
-  participant Attacker
-  participant Network
-  Attacker->>Network: Record ciphertext today
-  Note over Attacker: Store years
-  Attacker->>Attacker: Decrypt when CRQC exists
-```
-
 ## 1.4 The "Harvest Now, Decrypt Later" Threat
 
 Perhaps the most urgent and underappreciated aspect of the quantum threat is the "Harvest Now, Decrypt Later" (HNDL) attack model, also sometimes called "store now, decrypt later" or "retrospective decryption." This concept fundamentally changes the timeline of quantum risk from a future concern to a present emergency.
+
+> **Author's note:** HNDL is the budget unlocker—archived TLS still matters years later. Budget for hybrid KEX on long-retention paths first.
+
+**Figure 1.2 — Harvest now, decrypt later (HNDL)**
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant A as Adversary
+  participant N as Network tap
+  participant S as Storage
+  A->>N: Record TLS/IPsec ciphertext
+  N->>S: Archive years cheaply
+  Note over A,S: No decryption today
+  A->>A: Later: CRQC + Shor
+  A->>S: Retrospective decrypt
+```
+
+*Figure 1.2 is the threat model we use when arguing for hybrid KEX before CRQC exists.*
 
 The HNDL attack operates on a simple but devastating logic: adversaries intercept and store encrypted communications today, while they are computationally protected by current cryptographic algorithms. These communications remain indecipherable using today's computing resources. However, the adversaries store the captured ciphertext indefinitely — storage is cheap and getting cheaper. When quantum computers capable of running Shor's algorithm at cryptographic scale eventually become available, the adversaries retrieve their stored ciphertexts and decrypt them, exposing secrets that may still be sensitive years or decades after their original transmission.
 
@@ -291,6 +236,19 @@ Even using moderate estimates, x + y (20-65 years) likely exceeds z (10-20 years
 ## 1.5 Defining the Quantum Threat Timeline
 
 The question of when a cryptographically relevant quantum computer (CRQC) will exist is perhaps the most important — and most uncertain — question in modern technology risk assessment. The answer determines the urgency of PQC migration, the allocation of resources, and the acceptable level of residual risk during transition.
+
+**Figure 1.3 — Mosca inequality (planning)**
+
+```mermaid
+flowchart LR
+  x[x: confidentiality years] --> Q{x + y > z ?}
+  y[y: migration years] --> Q
+  z[z: CRQC horizon] --> Q
+  Q -->|yes| R[At risk now]
+  Q -->|no| OK[Window remains]
+```
+
+*Use Figure 1.3 when prioritizing systems: if x + y > z, migration is already late for that data class.*
 
 ### Expert Estimates and Surveys
 
@@ -484,20 +442,25 @@ We structured this text as a layered reference that serves multiple audiences. I
 
 We keep physics intuition where it explains **why Shor wins**; we skip deep Hilbert-space formalism unless you are proving theorems.
 
-**Figure 2.1 — Qubit vs classical bit (decision view)**
-
-```mermaid
-flowchart LR
-  C[Classical: one of 2^n states] --> CQ[Deterministic evolution]
-  Q[Quantum: superposition] --> QQ[Unitary + measure]
-  QQ --> Shor[Enables period finding]
-```
-
----
-
 ## 2.1 Classical vs. Quantum Computation
 
 To understand why quantum computers pose an existential threat to much of modern cryptography, we must first develop a rigorous understanding of how quantum computation differs from classical computation at the most fundamental level. The distinction is not merely one of speed — quantum computers operate according to entirely different physical principles, enabling qualitatively new forms of information processing.
+
+**Figure 2.1 — Classical bit vs qubit (conceptual)**
+
+```mermaid
+flowchart TB
+  subgraph classical [Classical n-bit register]
+    C1[Exactly one of 2^n states]
+  end
+  subgraph quantum [Quantum n-qubit register]
+    Q1[Superposition over 2^n amplitudes]
+    Q2[Measure → one n-bit string]
+  end
+  classical -.->|not parallel search| quantum
+```
+
+*Figure 2.1 contrasts state space: one classical string versus amplitudes over 2^n basis states.*
 
 ### Classical Bits and Deterministic Computation
 
@@ -550,17 +513,20 @@ However, it is critical to understand what this does NOT mean. A common misconce
 The true power of quantum computation lies in the ability to manipulate amplitudes through quantum gates such that, after a carefully designed sequence of operations, the probability of measuring a desired answer is high. This manipulation relies on the phenomena of **entanglement** and **interference** — the genuine sources of quantum computational advantage.
 
 
-**Figure 2.2 — Quantum circuit abstraction**
-
-```mermaid
-flowchart LR
-  Init[Initialize] --> U[Unitary gates]
-  U --> M[Measure classical bits]
-```
-
 ## 2.2 Key Quantum Phenomena
 
 Three quantum mechanical phenomena underpin the power of quantum computation: superposition, entanglement, and interference. While superposition provides the exponential state space, entanglement creates correlations that enable efficient information processing across that space, and interference provides the mechanism for extracting useful answers.
+
+**Figure 2.2 — Quantum circuit model**
+
+```mermaid
+flowchart LR
+  INIT[|0…0⟩ prepare] --> U[Unitary gates U]
+  U --> INT[Interference builds peaks]
+  INT --> MEAS[Measure → classical bits]
+```
+
+*Figure 2.2 is the abstraction Shor's algorithm instantiates: unitary evolution then measurement.*
 
 ### Superposition in Depth
 
@@ -690,6 +656,17 @@ Common universal gate sets include:
 ## 2.4 Quantum Computational Complexity
 
 Understanding the computational power of quantum computers requires the framework of computational complexity theory — the study of what problems can be solved efficiently with given computational resources.
+
+**Figure 2.3 — Physical vs logical qubit**
+
+```mermaid
+flowchart TB
+  PHY[10^6 physical qubits] --> QEC[Quantum error correction]
+  QEC --> LOG[Thousands of logical qubits]
+  LOG --> CRQC[CRQC needs millions logical for Shor on RSA-2048]
+```
+
+*Figure 2.3 explains why marketing qubit counts ≠ cryptographically relevant logical qubits.*
 
 ### BQP: Bounded-Error Quantum Polynomial Time
 
@@ -1159,23 +1136,22 @@ The fundamental insight is that quantum speedups require exploitable mathematica
 
 This is the **kill chain** chapter: which algorithms die, which shrink security margins, and what you must replace first.
 
-**Figure 3.1 — Attack map to primitives**
-
-```mermaid
-flowchart TD
-  Shor[Shor polynomial time] --> RSA[RSA factoring]
-  Shor --> DLP[Finite-field DLP]
-  Shor --> ECDLP[ECDLP]
-  Grover[Grover sqrt speedup] --> SYM[Symmetric keys halved effective bits]
-```
-
----
-
 Classical hardness assumptions are the contract we have been living under—Shor voids that contract for public-key systems.
 
 ## 3.1 The Foundation of Classical Cryptographic Security
 
 Modern cryptography does not rely on secrecy of algorithms. Instead, it rests on a fundamentally different pillar: the assumption that certain mathematical problems are computationally intractable for any classical computer, regardless of the ingenuity of the attacker. This is a subtle but critical distinction. We do not claim these problems are impossible to solve — only that solving them requires resources (time, memory, energy) that exceed what any adversary could plausibly muster within a meaningful timeframe.
+
+**Figure 3.1 — Classical hard problems → deployed crypto**
+
+```mermaid
+flowchart LR
+  IFP[Integer factorization] --> RSA[RSA]
+  DLP[Finite-field DLP] --> DH[DH DSA]
+  ECDLP[ECDLP] --> ECC[ECDH ECDSA]
+```
+
+*Figure 3.1 links IFP, DLP, and ECDLP to the protocols you must replace.*
 
 This entire framework is built on unproven assumptions. No one has ever proven that integer factorization or discrete logarithm computation is inherently hard. We have no proof that P does not equal NP. What we have instead is decades of empirical evidence: generations of brilliant mathematicians and computer scientists have tried — and failed — to find efficient algorithms for these problems. This accumulated failure constitutes our evidence of security, and it has served us remarkably well for over four decades.
 
@@ -1208,17 +1184,19 @@ For forty years, this approach has proven extraordinarily successful. Despite en
 > **Author's note:** Treat Shor-vulnerable keys as **expired** once CRQC exists—plan backward from data lifetime.
 
 
-**Figure 3.2 — Grover impact on AES**
-
-```mermaid
-flowchart LR
-  AES256[AES-256] --> Eff128[Effective ~128-bit quantum margin]
-  AES128[AES-128] --> Eff64[Effective ~64-bit — inadequate]
-```
-
 ## 3.2 Shor's Algorithm: The Quantum Threat to Public-Key Cryptography
 
 In 1994, Peter Shor, working at Bell Labs, published a quantum algorithm that solves both integer factorization and discrete logarithm in polynomial time. This single paper represents perhaps the most consequential algorithmic discovery in the history of computer science — not because of what it enables constructively, but because of what it destroys. Shor's algorithm renders the entire foundation of public-key cryptography obsolete, given a sufficiently powerful quantum computer.
+
+**Figure 3.2 — Shor pipeline (high level)**
+
+```mermaid
+flowchart LR
+  P[Period finding QFT] --> F[Factor / DLP / ECDLP]
+  F --> B[Break RSA DH ECC]
+```
+
+*Figure 3.2 is the path from period finding to broken public-key trust.*
 
 ### Conceptual Foundation: Period Finding
 
@@ -1346,6 +1324,16 @@ This affects every system using ECDH for key exchange, ECDSA or EdDSA for digita
 ## 3.3 Grover's Algorithm: The Quadratic Speedup
 
 In 1996, Lov Grover published a quantum algorithm for unstructured search that achieves a quadratic speedup over any classical algorithm. Unlike Shor's algorithm, which provides an exponential speedup for structured algebraic problems, Grover's provides a more modest — but still significant — quadratic improvement for generic search problems. Crucially, this quadratic speedup has been proven optimal: no quantum algorithm can search an unstructured database faster than O(sqrt(N)).
+
+**Figure 3.3 — Grover impact on symmetric keys**
+
+```mermaid
+flowchart LR
+  AES128[AES-128] --> G128[~64-bit quantum margin]
+  AES256[AES-256] --> G256[~128-bit quantum margin]
+```
+
+*Figure 3.3 drives AES-256 policy: Grover halves effective key strength in the quantum query model.*
 
 ### The Search Problem
 
@@ -1682,19 +1670,6 @@ The path away from cryptographic apocalypse requires coordinated action across t
 
 We compare families the way architects do: **assumption, size, speed, maturity**—not fan-club loyalty.
 
-**Figure 4.1 — Family → typical use**
-
-```mermaid
-flowchart LR
-  L[Lattice] --> KEM[ML-KEM / ML-DSA]
-  C[Code] --> MCE[McEliece / HQC]
-  H[Hash] --> SLH[SLH-DSA / XMSS]
-  M[Multivariate] --> UOV[UOV / MAYO eval]
-  I[Isogeny] --> EXP[Research signatures]
-```
-
----
-
 ## 4.1 Design Principles of Post-Quantum Algorithms
 
 The construction of post-quantum cryptographic algorithms is guided by a set of interrelated design principles that balance theoretical rigor with engineering pragmatism. Understanding these principles is essential for evaluating and selecting PQC schemes.
@@ -1734,6 +1709,18 @@ The PQC transition introduces unprecedented uncertainty. No single hardness assu
 ## 4.2 The Five Families of PQC
 
 Post-quantum cryptography encompasses five major algorithm families, each rooted in fundamentally different mathematical structures. These families represent decades of research across algebraic geometry, coding theory, combinatorics, and number theory.
+
+**Figure 4.1 — PQC algorithm families and typical roles**
+
+```mermaid
+flowchart TB
+  L[Lattice] --> KEM[ML-KEM]
+  L --> SIG[ML-DSA]
+  C[Code] --> HQC[HQC / McEliece]
+  H[Hash] --> SLH[SLH-DSA]
+```
+
+*Figure 4.1 is our family picker for standards committees and architecture boards.*
 
 ### 4.2.1 Lattice-Based Cryptography
 
@@ -1903,6 +1890,21 @@ Isogeny-based cryptography offers the smallest key sizes and signatures of any P
 The SIDH catastrophe demonstrated that isogeny-based assumptions are less mature and more fragile than initially hoped. Computational efficiency is poor — even CSIDH key exchange takes tens of milliseconds, orders of magnitude slower than lattice alternatives. The mathematical theory is deep and accessible to fewer cryptanalysts, meaning less aggregate effort has been applied to finding attacks. Kuperberg's algorithm creates ongoing uncertainty about the quantum security of commutative isogeny problems. The field is evolving rapidly, with new constructions and attacks appearing frequently, making it premature for high-assurance deployment.
 
 ## 4.3 Comparative Analysis of PQC Families
+
+Understanding trade-offs between families requires comparing size, speed, and maturity on the same axes. **Figure 4.2** highlights that bandwidth—not CPU alone—often dominates on mobile paths.
+
+**Figure 4.2 — Size/speed trade-off axes (conceptual)**
+
+```mermaid
+flowchart LR
+  SIZE[Smaller keys/certs] --- SPEED[Faster verify]
+  LATTICE[Lattice] --> BAL[Balanced default]
+  HASH[Hash sigs] --> LARGE[Large signatures]
+```
+
+*Figure 4.2 reminds teams that **bytes on the wire** often dominate Indian mobile latency more than CPU.*
+
+### Performance and size comparison
 
 Understanding the trade-offs between PQC families requires examining multiple dimensions simultaneously. The following comparison synthesizes the key properties:
 
@@ -2285,8 +2287,6 @@ Despite the maturation of PQC standards, numerous fundamental and applied resear
 
 ---
 
----
-
 # PART II — CORE POST-QUANTUM ALGORITHMS
 
 
@@ -2295,18 +2295,6 @@ Despite the maturation of PQC standards, numerous fundamental and applied resear
 # Chapter 5: Lattice-Based Cryptography
 
 Lattices won NIST for good reason; we explain **why Module-LWE is the workhorse** without drowning you in geometry.
-
-**Figure 5.1 — LWE encryption intuition**
-
-```mermaid
-flowchart LR
-  SK[Secret s] --> PK[t = As + e]
-  MSG[Message m] --> CT[ciphertext noisy]
-  PK --> CT
-  SK --> DEC[Decrypt round]
-```
-
----
 
 ## 5.1 Introduction to Lattices
 
@@ -2370,15 +2358,19 @@ The LWE problem can be reformulated as a problem on q-ary lattices: given an LWE
 Ajtai's seminal 1996 work showed that random q-ary lattices enjoy remarkable average-case hardness properties: solving SIS (and thus SVP) on a randomly chosen q-ary lattice is at least as hard as solving worst-case lattice problems on any lattice of the same dimension. This worst-case to average-case connection is unique among cryptographic assumptions — most other assumptions (factoring, discrete logarithm) are average-case statements without worst-case backing.
 
 
-**Figure 5.2 — Module-LWE module view**
+## 5.2 Hard Lattice Problems
+
+**Figure 5.1 — LWE public-key formation**
 
 ```mermaid
-flowchart TB
-  Rq[Ring R_q] --> Mod[Module rank k]
-  Mod --> MLKEM[ML-KEM / ML-DSA]
+flowchart LR
+  s[Secret s] --> t[t = As + e]
+  A[Public A] --> t
+  t --> pk[Public key]
 ```
 
-## 5.2 Hard Lattice Problems
+*Figure 5.1 is the mental model for ML-KEM key generation: noisy linear structure hides the secret.*
+
 
 ### Shortest Vector Problem (SVP)
 
@@ -2496,6 +2488,19 @@ The consensus view is that Module-LWE with k >= 2 offers security substantially 
 Analogous to Module-LWE, the **Module-SIS** problem asks: given a random matrix A in R_q^(k x l), find a short non-zero vector x in R_q^l such that A*x = 0 mod q and all coefficients of x are bounded. Module-SIS underlies the security of lattice-based signature schemes like ML-DSA, where the signer must produce short preimages under modular linear maps over polynomial rings. The relationship between Module-SIS and Module-LWE mirrors that between SIS and LWE in the unstructured setting — they are "dual" problems that together support the full range of basic cryptographic primitives.
 
 ## 5.4 Lattice-Based Encryption: The Regev/LPR Framework
+
+**Figure 5.2 — Module rank k in ML-KEM**
+
+```mermaid
+flowchart TB
+  Rq[Ring Z_q[X]/(X^256+1)] --> Mod[Module dimension k]
+  Mod --> K512[k=2 ML-KEM-512]
+  Mod --> K768[k=3 ML-KEM-768]
+  Mod --> K1024[k=4 ML-KEM-1024]
+```
+
+*Figure 5.2: increasing module rank k raises dimension without changing the ring R_q.*
+
 
 ### Regev's Original Encryption Scheme
 
@@ -2976,17 +2981,6 @@ Lattice assumptions enable efficient protocols for secure multi-party computatio
 
 McEliece is the **conservative safe** in the room—huge keys, old confidence. We use it when policy demands assumption diversity.
 
-**Figure 6.1 — McEliece encode/decode roles**
-
-```mermaid
-flowchart LR
-  E[Error vector e] --> SYN[s = He]
-  PK[Public H] --> ENC[Syndrome / ciphertext]
-  SK[Trapdoor Goppa] --> DEC[Decode]
-```
-
----
-
 ## 6.1 Error-Correcting Codes: Background
 
 Error-correcting codes were originally developed by Claude Shannon, Richard Hamming, and others in the late 1940s and 1950s to enable reliable communication over noisy channels. The fundamental idea is to introduce structured redundancy into transmitted messages so that errors introduced during transmission can be detected and corrected by the receiver. This mathematical framework, developed for communications engineering, turns out to provide precisely the right abstraction for building cryptographic systems resistant to quantum attacks.
@@ -3043,6 +3037,18 @@ The crucial property of Goppa codes for cryptography is that they are indistingu
 ## 6.2 The McEliece Cryptosystem
 
 Robert McEliece proposed his public-key encryption system at the 1978 IEEE International Symposium on Information Theory. The system was revolutionary in its approach: rather than relying on number-theoretic problems like factoring or discrete logarithms, it drew its security from the computational difficulty of decoding general linear codes. Despite receiving less attention than RSA in the following decades due to its large key sizes, the McEliece system has proven remarkably resistant to cryptanalysis.
+
+**Figure 6.1 — McEliece: syndrome as ciphertext**
+
+```mermaid
+flowchart LR
+  e[Small error e] --> s[s = He]
+  H[Public H] --> s
+  s --> ct[Ciphertext]
+  trap[Goppa trapdoor] --> dec[Decode]
+```
+
+*Figure 6.1 shows why decryption is easy with the Goppa trapdoor but hard without it.*
 
 ### Construction
 
@@ -3586,17 +3592,6 @@ The choice between schemes depends on deployment constraints: Classic McEliece i
 
 Hash signatures trade size for **minimal assumptions**—excellent for roots of trust if you respect state.
 
-**Figure 7.1 — Merkle tree signature flow**
-
-```mermaid
-flowchart TB
-  OTS[One-time keys leaves] --> TREE[Merkle root in pubkey]
-  SIGN[Sign with leaf OTS] --> PROOF[Auth path]
-  PROOF --> VERIFY[Verify to root]
-```
-
----
-
 ## 7.1 The Appeal of Hash-Based Cryptography
 
 Among the families of post-quantum cryptographic schemes, hash-based signatures occupy a philosophically distinctive position. Their security relies on what cryptographers consider the **minimal possible assumption**: the existence of a secure hash function. There are no hidden algebraic structures to exploit, no lattice problems whose hardness might one day be undermined by clever algorithms, and no error-correcting codes whose parameters might prove insufficiently conservative. The entire security argument reduces to the one-wayness, second preimage resistance, and collision resistance of a well-studied hash function.
@@ -3616,17 +3611,20 @@ The concrete benefits of hash-based security assumptions include:
 The trade-offs, however, are significant. Hash-based signatures typically produce larger signatures than lattice-based alternatives: SLH-DSA signatures range from approximately 8 KB to 50 KB, compared to 2.4 KB for ML-DSA at comparable security levels. Signing and verification operations require hundreds or thousands of hash function evaluations, making them slower in absolute terms, though still practical for most applications. Key generation for stateful schemes can also be expensive when large trees must be constructed upfront. These trade-offs make hash-based signatures a complement to lattice-based approaches rather than a replacement: they serve as the conservative fallback when maximum security confidence outweighs performance concerns.
 
 
-**Figure 7.2 — Stateful vs stateless deployment**
-
-```mermaid
-flowchart LR
-  XMSS[XMSS/LMS stateful] --> FW[Firmware trust anchors]
-  SLH[SLH-DSA stateless] --> TLS[General signatures]
-```
-
 ## 7.2 One-Time Signatures: The Building Block
 
 The entire edifice of hash-based cryptography rests on a deceptively simple foundation: the one-time signature (OTS). A one-time signature scheme allows a signer to produce exactly one signature under a given key pair. If the key pair is reused, the scheme's security guarantees evaporate. While this seems like an absurd limitation, it turns out that one-time signatures can be constructed from hash functions alone with extraordinary efficiency, and the limitation can be managed through tree-based key management structures described in later sections.
+
+**Figure 7.1 — Merkle tree one-time signature flow**
+
+```mermaid
+flowchart TB
+  OTS[OTS key at leaf] --> SIG[Sign message]
+  SIG --> PATH[Auth path to root]
+  PATH --> ROOT[Root in public key]
+```
+
+*Figure 7.1 underpins XMSS/LMS and the hypertrees inside SLH-DSA.*
 
 ### Lamport Signatures (1979)
 
@@ -3727,6 +3725,16 @@ For the parameters used in SLH-DSA-128f (k = 33, a = 6), even after 2^10 signatu
 ## 7.4 Merkle Trees: Managing Many Keys
 
 The fundamental limitation of one-time and few-time signatures — that they can sign only a limited number of messages — must be overcome for practical use. Ralph Merkle's brilliant insight in 1979 was that a binary hash tree could aggregate an exponential number of one-time key pairs under a single compact public key, with verification requiring only a logarithmic-length proof.
+
+**Figure 7.2 — Stateful vs stateless deployment**
+
+```mermaid
+flowchart LR
+  XMSS[XMSS/LMS] --> HSM[Must store index]
+  SLH[SLH-DSA] --> STATELESS[No index in HSM]
+```
+
+*Figure 7.2 drives HSM requirements: stateful schemes need persistent index storage.*
 
 ### Construction
 
@@ -4218,16 +4226,6 @@ Hardware implementations and multi-core software implementations can exploit thi
 
 Rainbow's break is a lesson in **structure leaks**; UOV survives because boring can be good.
 
-**Figure 8.1 — Oil and vinegar partition**
-
-```mermaid
-flowchart LR
-  V[Vinegar variables] --> LIN[Linear in oil after fix v]
-  O[Oil variables] --> SOLVE[Solve small system]
-```
-
----
-
 ## 8.1 The Multivariate Quadratic Problem
 
 Multivariate cryptography stands apart from other post-quantum families by drawing its hardness not from geometric lattice problems or error-correcting codes, but from the algebraic difficulty of solving systems of polynomial equations over finite fields. The fundamental problem underpinning this entire family—the Multivariate Quadratic (MQ) problem—has been studied in computational algebra for decades and possesses strong theoretical complexity guarantees that persist even in the presence of quantum computers.
@@ -4290,17 +4288,19 @@ In practice, most multivariate schemes work over small finite fields:
 The choice of field affects the number of variables and equations needed: larger fields allow fewer variables for the same security level (since each variable carries more entropy), but individual field operations become more expensive.
 
 
-**Figure 8.2 — Rainbow break lesson**
-
-```mermaid
-flowchart TD
-  Layers[Multiple OV layers] --> Leak[Algebraic structure leak]
-  Leak --> Break[Practical key recovery 2022]
-```
-
 ## 8.2 The Trapdoor Construction Paradigm
 
 A random system of multivariate quadratic polynomials is computationally intractable to solve—but it is equally intractable to invert for the legitimate key holder. The fundamental challenge in multivariate cryptography is constructing polynomial systems that appear random to an external observer yet possess a hidden mathematical structure (a trapdoor) that enables efficient inversion by the secret key holder.
+
+**Figure 8.1 — Oil and vinegar variable split**
+
+```mermaid
+flowchart LR
+  V[vinegar vars] --> LIN[Linear in oil]
+  O[oil vars] --> SOLVE[Easy solve]
+```
+
+*Figure 8.1 explains the trapdoor: fix vinegar, solve linear system in oil variables.*
 
 ### The Central Map Approach
 
@@ -4451,6 +4451,16 @@ Each attack improvement has been addressable through modest parameter increases,
 ## 8.4 Rainbow (Historical — Broken in 2022)
 
 Rainbow, designed by Jintai Ding and Dieter Schmidt in 2005, was for many years considered the most efficient multivariate signature scheme. It advanced to the third round of the NIST PQC competition before being catastrophically broken by Ward Beullens in early 2022. Its story provides critical lessons for post-quantum cryptographic design and evaluation.
+
+**Figure 8.2 — Why Rainbow layers leaked structure (2022)**
+
+```mermaid
+flowchart TD
+  LAY[Layered OV] --> REL[Inter-layer relations]
+  REL --> ATK[Beullens key recovery]
+```
+
+*Figure 8.2 is the lesson: extra layers for efficiency created algebraically exploitable structure.*
 
 ### Construction
 
@@ -4943,17 +4953,6 @@ Several fundamental questions remain open in multivariate cryptography:
 
 SIDH taught us that **published torsion can be lethal**; we document survivors and label them experimental.
 
-**Figure 9.1 — SIDH break lesson (conceptual)**
-
-```mermaid
-flowchart TD
-  PUB[Publish auxiliary torsion] --> ATT[Castryck-Decru 2022]
-  ATT --> DEAD[SIDH/SIKE broken]
-  CSIDH[CSIDH: no torsion leak] --> OPEN[Still debated quantum cost]
-```
-
----
-
 ## 9.1 Elliptic Curves and Isogenies
 
 Isogeny-based cryptography occupies a unique position in the post-quantum landscape. While lattice and code-based schemes dominate standardization efforts, isogeny-based constructions offer unmatched compactness—public keys and signatures measured in tens of bytes rather than kilobytes. This chapter traces the mathematical foundations, the dramatic rise and fall of SIDH/SIKE, the surviving constructions, and the current state of this rapidly evolving field.
@@ -5017,14 +5016,6 @@ The structure of the isogeny graph depends dramatically on whether we restrict t
 - The structure is determined by the factorization of the ideal (ℓ) in the endomorphism ring.
 - This regular structure is used in CSIDH, where the class group action follows horizontal paths on the volcano.
 
-
-**Figure 9.2 — Post-SIDH landscape**
-
-```mermaid
-flowchart LR
-  SIDH[Broken SIDH/SIKE] --> CSIDH[CSIDH research]
-  CSIDH --> SQISign[SQISign signatures]
-```
 
 ## 9.2 Supersingular vs. Ordinary Curves
 
@@ -5096,6 +5087,17 @@ An important subtlety in the design of isogeny-based schemes is the field of def
 Working over F_p (CSIDH) enables simpler arithmetic, commutativity of the group action, and smaller field representations, but provides a smaller keyspace and vulnerability to Kuperberg's algorithm through the commutative structure. Working over F_{p²} (SIDH, SQISign) enables a larger keyspace with stronger security assumptions and richer algebraic structure through quaternion algebras, but requires more expensive field arithmetic and confronts the challenges of non-commutativity.
 
 ## 9.3 Hard Problems in Isogeny-Based Cryptography
+
+**Figure 9.1 — SIDH auxiliary torsion → break**
+
+```mermaid
+flowchart TD
+  PUB[Publish torsion images] --> CD[Castryck-Decru]
+  CD --> BR[Polynomial-time break]
+```
+
+*Figure 9.1 documents why publishing torsion images was fatal to SIDH/SIKE.*
+
 
 ### The Supersingular Isogeny Problem
 
@@ -5267,6 +5269,20 @@ The SIDH/SIKE break carries profound lessons for post-quantum cryptography:
 5. **The importance of diverse approaches:** The SIDH break did not affect CSIDH (which publishes no auxiliary points) or SQISign (which uses a fundamentally different paradigm), illustrating the value of maintaining multiple approaches within a cryptographic family.
 
 ## 9.5 CSIDH: Commutative Group Actions
+
+After SIDH/SIKE, research focused on schemes that avoid publishing dangerous torsion information. **Figure 9.2** maps the post-SIDH landscape—treat these as **research**, not procurement defaults.
+
+**Figure 9.2 — Post-SIDH research map**
+
+```mermaid
+flowchart LR
+  SIDH[Broken SIDH] --> CSIDH[CSIDH eval]
+  CSIDH --> SQI[SQISign research]
+```
+
+*Figure 9.2: treat CSIDH/SQISign as **research**, not procurement defaults.*
+
+### Construction
 
 ### Construction
 
@@ -5649,9 +5665,7 @@ This table underscores the fundamental trade-off: isogeny-based cryptography off
 
 ---
 
----
-
-# PART III — NIST STANDARDIZATION AND STANDARDS
+# PART III — NIST STANDARDIZATION
 
 
 ---
@@ -5659,19 +5673,6 @@ This table underscores the fundamental trade-off: isogeny-based cryptography off
 # Chapter 10: The NIST Post-Quantum Standardization Process
 
 NIST's process is the **global clock** for procurement—even when your data never leaves India.
-
-**Figure 10.1 — NIST PQC phases**
-
-```mermaid
-timeline
-  title NIST PQC (high level)
-  2016 : Competition announced
-  2022 : Rainbow SIKE breaks
-  2024 : FIPS 203 204 205
-  2025+ : FN-DSA HQC tracks
-```
-
----
 
 ## 10.1 Why NIST?
 
@@ -5704,16 +5705,20 @@ Several factors make NIST the natural choice for post-quantum standardization ra
 The post-quantum standardization effort was unprecedented in scope even by NIST's standards. Unlike AES (one block cipher) or SHA-3 (one hash function), this effort needed to standardize replacements for multiple cryptographic primitives—key encapsulation mechanisms, digital signatures, and potentially more—across different mathematical foundations. The threat model was also unusual: standardizing defenses against an adversary (a large-scale quantum computer) that did not yet exist but whose capabilities could be precisely characterized through quantum computational complexity theory.
 
 
-**Figure 10.2 — Round funnel**
+## 10.2 Timeline of the PQC Standardization
+
+**Figure 10.1 — NIST PQC timeline**
 
 ```mermaid
-flowchart TD
-  R1[69 schemes R1] --> R2[26 R2]
-  R2 --> R3[Finalists + breaks]
-  R3 --> FIPS[FIPS 203 204 205]
+timeline
+  title NIST PQC milestones
+  2016 : Call for proposals
+  2022 : SIKE Rainbow breaks
+  2024 : FIPS 203 204 205
 ```
 
-## 10.2 Timeline of the PQC Standardization
+*Figure 10.1 anchors procurement language to competition milestones.*
+
 
 ### Pre-Competition Phase (2014-2016)
 
@@ -5860,6 +5865,17 @@ NIST's evaluation balanced multiple dimensions, explicitly acknowledging that no
 ## 10.4 Why Kyber/ML-KEM Won
 
 The selection of CRYSTALS-Kyber as the primary KEM standard over three other lattice finalists (NTRU, SABER) and one code-based finalist (Classic McEliece) was among NIST's most closely debated decisions. The three lattice KEMs were remarkably close in overall quality, and NIST's decision ultimately rested on a combination of technical advantages and practical considerations.
+
+**Figure 10.2 — Round-down funnel**
+
+```mermaid
+flowchart TD
+  R1[82 submissions] --> R2[26 round 2]
+  R2 --> F[7 finalists]
+  F --> STD[FIPS + ongoing HQC FN-DSA]
+```
+
+*Figure 10.2 shows why diversity algorithms survived as alternates.*
 
 ### Kyber's Comprehensive Advantages
 
@@ -6200,31 +6216,6 @@ The contrast with earlier, less transparent standardization efforts (the DES con
 
 We walk ML-KEM the way implementers need: **K-PKE, FO transform, implicit rejection**—with constant-time warnings baked in.
 
-**Figure 11.1 — ML-KEM-768 object sizes (typical deployment)**
-
-| Object | Bytes (ML-KEM-768) | Role |
-|--------|-------------------:|------|
-| Public key `ek` | 1,184 | Long-lived; in cert extensions / config |
-| Secret key `dk` | 2,400 | HSM-protected; never logged |
-| Ciphertext `c` | 1,088 | Per-handshake on the wire |
-| Shared secret | 32 | Feeds HKDF → AES-GCM |
-
-```mermaid
-sequenceDiagram
-  participant S as Sender encaps
-  participant R as Receiver decaps
-  S->>R: ciphertext c (1088 B)
-  R->>R: m' from v - s^T u
-  R->>R: re-encrypt FO check
-  alt valid c
-    R-->>S: KDF(K', H(c))
-  else invalid c
-    R-->>S: KDF(z, H(c)) implicit reject
-  end
-```
-
----
-
 > **Author's note:** Implement ML-KEM from **FIPS 203 PDF + ACVP test vectors**, not from memory of the Kyber submission. Parameter sets (512/768/1024) are not interchangeable—your TLS profile must name the exact set.
 
 ## 11.1 Overview
@@ -6247,14 +6238,6 @@ ML-KEM embodies a design philosophy that prioritizes implementation simplicity a
 
 **Implicit rejection.** Rather than signaling decapsulation failure explicitly, ML-KEM returns a pseudorandom value for invalid ciphertexts, preventing entire classes of oracle attacks.
 
-
-**Figure 11.2 — FO transform wrapper**
-
-```mermaid
-flowchart LR
-  CPA[K-PKE IND-CPA] --> FO[FO transform]
-  FO --> CCA[ML-KEM IND-CCA2]
-```
 
 ## 11.2 Mathematical Foundation
 
@@ -6331,6 +6314,21 @@ These operations are highly parallelizable and map naturally to SIMD instruction
 **Domain strategy.** ML-KEM stores the public matrix **Â** and secret vector **ŝ** permanently in NTT domain. This avoids redundant transformations: key generation computes **t̂** = **Â**·**ŝ** + **ê** directly in NTT domain; encapsulation multiplies by **Â** without ever computing inverse NTTs for the matrix. Only the final ciphertext construction and decryption steps require inverse NTTs.
 
 ## 11.3 Parameter Sets
+
+ML-KEM defines three parameter sets targeting NIST security levels 1, 3, and 5. **Figure 11.1** lists the on-the-wire object sizes for the profile most teams deploy first (ML-KEM-768).
+
+**Figure 11.1 — ML-KEM-768 object sizes (wire format)**
+
+| Object | Bytes (ML-KEM-768) | Notes |
+|--------|-------------------:|-------|
+| `ek` (public key) | 1,184 | Often in ClientHello key_share |
+| `dk` (secret key) | 2,400 | HSM-only; never log |
+| `c` (ciphertext) | 1,088 | Server → client in hybrid KEX |
+| Shared secret | 32 | Input to HKDF with classical ss |
+
+*Size budget for hybrid TLS lives in Figure 11.1—account for key_share growth on mobile paths.*
+
+### Parameter set comparison
 
 ML-KEM defines three parameter sets targeting NIST security levels 1, 3, and 5:
 
@@ -6481,6 +6479,20 @@ Steps 9-12 implement the implicit rejection mechanism: invalid ciphertexts produ
 **Why re-encryption is necessary:** Without the re-encryption check, an adversary could submit malformed ciphertexts to a decapsulation oracle and learn information about the secret key from the responses. The re-encryption check makes ML-KEM a "check-then-use" construction: the shared secret is only released if the ciphertext is provably well-formed under the derived randomness.
 
 ## 11.5 Security Mechanisms
+
+**Figure 11.2 — IND-CCA2 via Fujisaki–Okamoto (implicit rejection)**
+
+```mermaid
+flowchart TD
+  IN[ciphertext c] --> DEC[Decrypt m']
+  DEC --> RE[Re-encrypt c']
+  RE --> CMP{c == c' ?}
+  CMP -->|yes| K1[KDF K' || H(c)]
+  CMP -->|no| K2[KDF z || H(c) pseudorandom]
+```
+
+*Figure 11.2 is the decapsulation path your implementation must match byte-for-byte in tests.*
+
 
 ### IND-CCA2 Security via the Fujisaki-Okamoto Transform
 
@@ -6853,17 +6865,6 @@ Organizations deploying ML-KEM should consider:
 
 Rejection sampling is not a detail—it is **the reason ML-DSA is secure**. Budget signing latency accordingly.
 
-**Figure 12.1 — Fiat–Shamir with aborts**
-
-```mermaid
-flowchart TD
-  Y[Sample masking y] --> Z[Compute z = y + c s]
-  Z -->|norm ok| OUT[Output signature]
-  Z -->|reject| Y
-```
-
----
-
 ## 12.1 Overview
 
 ML-DSA (Module-Lattice-Based Digital Signature Algorithm), standardized as FIPS 204 by NIST in August 2024, is the primary post-quantum digital signature standard selected through NIST's multi-year Post-Quantum Cryptography Standardization Process. Derived from the CRYSTALS-Dilithium submission, ML-DSA represents the culmination of over a decade of research into practical lattice-based signature schemes. It provides existential unforgeability under chosen-message attacks (EUF-CMA), the standard security notion for digital signatures, meaning that an adversary who can adaptively obtain signatures on messages of their choice still cannot produce a valid signature on any new message not previously queried.
@@ -6877,6 +6878,19 @@ ML-DSA is positioned as the general-purpose signature algorithm in NIST's post-q
 > **Author's note:** Capacity-plan signing for **p99** latency; rejection sampling variance is not noise.
 
 ## 12.2 Design Philosophy: Fiat-Shamir with Aborts
+
+**Figure 12.1 — Fiat–Shamir with aborts (signing loop)**
+
+```mermaid
+flowchart TD
+  Y[Sample y] --> Z[z = y + c s]
+  Z --> CHK{||z|| bound?}
+  CHK -->|no| Y
+  CHK -->|yes| OUT[Output sig]
+```
+
+*Figure 12.1 is why ML-DSA signing time has variance—size clusters for p99.*
+
 
 ### The Classical Fiat-Shamir Transform
 
@@ -6923,6 +6937,17 @@ The technique can be understood through an analogy: imagine a biased coin that t
 ## 12.3 Parameter Sets
 
 ML-DSA defines three parameter sets targeting different NIST security levels:
+
+**Figure 12.2 — ML-DSA parameter sets (k, ℓ)**
+
+```mermaid
+flowchart LR
+  D44[ML-DSA-44 k4 l4] --> L2[Level 2]
+  D65[ML-DSA-65 k6 l5] --> L3[Level 3]
+  D87[ML-DSA-87 k8 l7] --> L5[Level 5]
+```
+
+*Figure 12.2 maps ML-DSA-44/65/87 to NIST levels 2/3/5.*
 
 | Parameter | ML-DSA-44 | ML-DSA-65 | ML-DSA-87 |
 |-----------|----------|----------|----------|
@@ -7481,17 +7506,6 @@ The NIST Algorithm Validation Program (CAVP) provides automated testing infrastr
 
 SLH-DSA is our choice when we want **hash-only assumptions** and can pay signature bytes.
 
-**Figure 13.1 — SLH-DSA hypertree sketch**
-
-```mermaid
-flowchart TB
-  FORS[FORS few-time sigs] --> WOTS[WOTS+ chains]
-  WOTS --> HT[Hypertree layers]
-  HT --> ROOT[Root in public key]
-```
-
----
-
 ## 13.1 Overview
 
 SLH-DSA (Stateless Hash-Based Digital Signature Algorithm), standardized as FIPS 205 by NIST in August 2024, represents the most conservative approach to post-quantum digital signatures. Derived from the SPHINCS+ submission, SLH-DSA occupies a unique position in the NIST post-quantum portfolio: its security rests solely on the well-understood properties of cryptographic hash functions — specifically second-preimage resistance and pseudorandomness — without relying on any algebraic or number-theoretic hardness assumptions.
@@ -7503,18 +7517,19 @@ The trade-off for this extraordinary security conservatism is performance: SLH-D
 SLH-DSA achieves the remarkable property of being stateless despite being built from inherently stateful primitives. Classical hash-based signature schemes like XMSS and LMS require the signer to maintain a counter that tracks which one-time keys have been used; reusing a key compromises security catastrophically. SLH-DSA eliminates this state management requirement through a deterministic indexing mechanism that derives the signing path from the message itself, making deployment substantially simpler and eliminating an entire class of operational failure modes.
 
 
-**Figure 13.2 — Parameter trade-off axes**
-
-```mermaid
-quadrantChart
-  title SLH-DSA variant axes
-  x Small sigs --> Large sigs
-  y Fast --> Slow
-```
-
 ## 13.2 Architecture: The Hypertree
 
 SLH-DSA employs a sophisticated layered structure called a hypertree that composes three distinct cryptographic building blocks into a single unified signature scheme. Understanding this architecture requires examining each component and how they interconnect.
+
+**Figure 13.1 — SLH-DSA hypertree**
+
+```mermaid
+flowchart TB
+  FORS[FORS OTS layer] --> WOTS[WOTS+ chains]
+  WOTS --> HT[Hypertree]
+```
+
+*Figure 13.1 connects FORS, WOTS+, and hypertree layers in one view.*
 
 ### The Three Building Blocks
 
@@ -7567,6 +7582,16 @@ Verification reverses this chain: starting from the FORS signature, it reconstru
 ## 13.3 Parameter Sets
 
 SLH-DSA offers twelve parameter sets, providing flexibility across three security levels, two hash function families, and two optimization targets:
+
+**Figure 13.2 — Fast (f) vs small (s) parameter axis**
+
+```mermaid
+flowchart LR
+  F[SHA2-128f] --> FAST[Faster larger sig]
+  S[SHA2-128s] --> SMALL[Smaller slower]
+```
+
+*Figure 13.2 guides parameter pick: bandwidth vs CPU, not security level alone.*
 
 ### SHA-256 Based Parameter Sets
 
@@ -8277,18 +8302,6 @@ The SLH-DSA design space continues to evolve:
 
 Standards are not finished—**diversity algorithms** matter for insurance, not for day-one TLS.
 
-**Figure 14.1 — Portfolio beyond FIPS 203–205**
-
-```mermaid
-flowchart LR
-  CORE[FIPS 203 204 205] --> DIV[Diversity layer]
-  DIV --> FN[FN-DSA]
-  DIV --> HQC[HQC KEM]
-  DIV --> MCE[Classic McEliece]
-```
-
----
-
 ## 14.1 Beyond the Primary Standards
 
 While FIPS 203, 204, and 205 provide the foundation for post-quantum cryptography—covering key encapsulation (ML-KEM), general-purpose digital signatures (ML-DSA), and hash-based signatures (SLH-DSA)—they do not represent the full scope of NIST's post-quantum standardization effort. The three primary standards were selected to provide immediate, deployable protection against quantum threats using algorithms that balance security, performance, and implementation simplicity. However, the NIST PQC process has always recognized that no single algorithm family provides optimal solutions for every use case, and that algorithmic diversity is essential for long-term cryptographic resilience.
@@ -8298,16 +8311,20 @@ Several factors motivate the continued evaluation and standardization of additio
 We survey the algorithms beyond the primary standards: those selected for standardization but not yet finalized (FN-DSA), those providing diversity for key encapsulation (Classic McEliece, HQC, BIKE), the additional signature candidates under evaluation in NIST's separate call, the already-standardized stateful hash-based signatures (XMSS/LMS), and guidance for algorithm selection across diverse deployment scenarios.
 
 
-**Figure 14.2 — When to reach beyond core FIPS**
+## 14.2 FN-DSA (FALCON)
+
+**Figure 14.1 — Portfolio beyond core FIPS**
 
 ```mermaid
-flowchart TD
-  Q{Need diversity or special size?}
-  Q -->|yes| ALT[FN-DSA / HQC / McEliece]
-  Q -->|no| CORE[FIPS 203-205 only]
+flowchart TB
+  CORE[FIPS 203-205] --> DIV[Diversity]
+  DIV --> FN[FN-DSA]
+  DIV --> HQC[HQC]
+  DIV --> MCE[Classic McEliece]
 ```
 
-## 14.2 FN-DSA (FALCON)
+*Figure 14.1 is the insurance layer—deploy after ML-KEM/ML-DSA baseline.*
+
 
 ### Overview and History
 
@@ -8545,6 +8562,18 @@ While HQC is measurably slower and larger than ML-KEM, its performance is still 
 HQC's primary role is as **insurance**: organizations that want maximum resilience can deploy both ML-KEM and HQC (in a hybrid configuration or as alternatives), ensuring that a failure of lattice-based assumptions does not leave them vulnerable. For systems where only a single KEM is practical, ML-KEM remains the default recommendation due to its superior efficiency. HQC is the fallback—the "break glass in case of lattice emergency" algorithm.
 
 ## 14.5 BIKE (Bit Flipping Key Encapsulation)
+
+**Figure 14.2 — Selection decision tree**
+
+```mermaid
+flowchart TD
+  Q{Need diversity?}
+  Q -->|yes| ALT[Add FN-DSA / HQC / McEliece]
+  Q -->|no| CORE[Core FIPS only]
+```
+
+*Use Figure 14.2 when a program demands non-lattice assumptions.*
+
 
 ### Overview and Design Philosophy
 
@@ -9013,8 +9042,6 @@ The post-quantum cryptography ecosystem continues to evolve rapidly. Several tre
 
 ---
 
----
-
 # PART IV — IMPLEMENTATION AND PRACTICE
 
 
@@ -9023,17 +9050,6 @@ The post-quantum cryptography ecosystem continues to evolve rapidly. Several tre
 # Chapter 15: Hybrid Cryptographic Schemes
 
 Hybrids are our default recommendation for production TLS until you have a written reason not to.
-
-**Figure 15.1 — Hybrid shared secret combiner**
-
-```mermaid
-flowchart LR
-  C1[X25519 ss] --> HKDF[HKDF-Extract/Expand]
-  C2[ML-KEM-768 ss] --> HKDF
-  HKDF --> KEYS[TLS handshake keys]
-```
-
----
 
 > **Author's note:** Measure hybrid overhead on **your** POPs; Indian mobile RTT amplifies byte costs.
 
@@ -9074,6 +9090,31 @@ This is formalized differently for different primitives:
 This property distinguishes a true hybrid construction from merely "running both algorithms and hoping one works." The construction must ensure that the security of the whole is at least as strong as the stronger component, under formal cryptographic definitions.
 
 ## 15.2 Hybrid Key Exchange
+
+Production hybrid TLS combines a classical ECDH shared secret with an ML-KEM shared secret, then feeds both into HKDF. **Figure 15.1** is the combiner architecture every profile must implement.
+
+**Figure 15.1 — Hybrid TLS shared-secret architecture**
+
+```mermaid
+flowchart TB
+  subgraph client [Client]
+    C1[X25519 ephemeral]
+    C2[ML-KEM encaps]
+  end
+  subgraph server [Server]
+    S1[X25519 ephemeral]
+    S2[ML-KEM ciphertext]
+  end
+  C1 --> SS1[classical ss]
+  S1 --> SS1
+  C2 --> SS2[pqc ss]
+  S2 --> SS2
+  SS1 --> HKDF[HKDF-Extract transcript]
+  SS2 --> HKDF
+  HKDF --> KEYS[TLS handshake keys]
+```
+
+*Figure 15.1 shows the combiner every production hybrid profile must implement.*
 
 ### Concatenated Key Derivation
 
@@ -9183,6 +9224,24 @@ WireGuard, a modern VPN protocol valued for its simplicity and performance, has 
 **Key insight for VPNs:** VPN tunnels are typically long-lived (hours to days), and the handshake overhead is amortized across millions of data packets. Even several kilobytes of additional handshake data have negligible impact on overall throughput.
 
 ## 15.3 Hybrid Signatures
+
+Hybrid signatures bind classical and post-quantum components so forgeries must break **both** schemes.
+
+**Figure 15.2 — Hybrid signature verification**
+
+```mermaid
+flowchart LR
+  M[Message] --> CS[Classical sig verify]
+  M --> PS[ML-DSA verify]
+  CS --> AND{Both OK?}
+  PS --> AND
+  AND -->|yes| OK[Accept]
+  AND -->|no| REJ[Reject]
+```
+
+*Figure 15.2: a hybrid signature is valid only if **both** classical and PQC verify.*
+
+### Construction patterns
 
 Hybrid signatures present significantly more design complexity than hybrid key exchange. While key exchange has a natural combination point (the KDF merging two shared secrets), signatures have multiple valid architectures with different security properties, compatibility characteristics, and implementation complexities.
 
@@ -9897,19 +9956,6 @@ Based on real-world deployment experience and formal analysis, the following rec
 
 Theory is IND-CCA; production is **constant-time or bust**. We have seen lattice leaks from careless NTT loops.
 
-**Figure 16.1 — Implementation threat model**
-
-```mermaid
-flowchart TD
-  CODE[Crypto code] --> TIME[Timing cache]
-  CODE --> POWER[Power EM]
-  LEAK[Leak bits] --> LATTICE[Lattice recovery]
-  TIME --> LEAK
-  POWER --> LEAK
-```
-
----
-
 Every PQC proof we trust still fails when a single branch leaks key bits—implementation is the real battlefield.
 
 ## 16.1 The Implementation Gap
@@ -9935,6 +9981,20 @@ The consequence is clear: implementing post-quantum cryptography securely requir
 > **Author's note:** We block lattice KEM releases without constant-time NTT—non-negotiable in our reviews.
 
 ## 16.2 Constant-Time Programming
+
+**Figure 16.1 — Side-channel attack surfaces**
+
+```mermaid
+flowchart TD
+  CODE[Crypto implementation] --> T[Timing cache]
+  CODE --> P[Power EM]
+  T --> LEAK[Partial key bits]
+  P --> LEAK
+  LEAK --> LAT[Lattice recovery]
+```
+
+*Figure 16.1 is our implementation review checklist—timing before algebra.*
+
 
 ### Why Constant-Time Matters
 
@@ -10296,6 +10356,17 @@ uint16_t gather_constant_time(const uint16_t *scattered, size_t n,
 Alternatively, eliminate tables entirely by computing values inline using arithmetic operations. For ML-KEM's small modulus (q = 3329), twiddle factors can be computed on the fly using Barrett reduction rather than looked up from a table, trading computation time for cache-timing resistance.
 
 ## 16.4 Masking Countermeasures
+
+**Figure 16.2 — Constant-time selection pattern**
+
+```mermaid
+flowchart LR
+  BR[Secret branch] --> BAD[Leak via cache]
+  CT[ct_select mask] --> OK[Data-independent access]
+```
+
+*Figure 16.2: replace secret branches with cmov-style selects.*
+
 
 ### Boolean Masking
 
@@ -11057,17 +11128,6 @@ While formal verification of complete PQC implementations remains an active rese
 
 Never trust a microsecond table without **CPU, library version, and percentile**—we publish our methodology before our winners.
 
-**Figure 17.1 — Benchmark dimensions**
-
-```mermaid
-flowchart LR
-  CPU[Platform] --> LAT[Latency percentiles]
-  CPU --> SIZE[Bytes on wire]
-  SIZE --> COST[Cloud egress $]
-```
-
----
-
 ## 17.1 Performance Metrics for PQC
 
 Evaluating post-quantum cryptographic algorithms requires a multidimensional analysis that goes far beyond simple "operations per second" measurements. The transition from classical to post-quantum cryptography changes the performance landscape in ways that affect system architecture, protocol design, and deployment decisions. Understanding these metrics — and their interactions — is essential for making informed choices about algorithm selection and deployment strategy.
@@ -11124,16 +11184,19 @@ Throughput and latency often trade off: batching operations improves throughput 
 > **Author's note:** Report p50 **and** p99 for ML-DSA signing; means lie.
 
 
-**Figure 17.2 — Measurement checklist**
+## 17.2 KEM Performance Comparison
+
+**Figure 17.1 — Benchmark dimensions**
 
 ```mermaid
-flowchart LR
-  HW[Document CPU] --> LIB[Library version]
-  LIB --> PCT[Report p50 p99]
-  PCT --> NET[Include bytes on wire]
+flowchart TB
+  HW[CPU model AVX] --> LAT[Latency p50 p99]
+  LIB[Library version] --> LAT
+  NET[Bytes handshake] --> COST[Egress cost]
 ```
 
-## 17.2 KEM Performance Comparison
+*Figure 17.1 defines what we publish alongside any μs number.*
+
 
 ### Computational Performance (x86-64, AVX2)
 
@@ -11221,6 +11284,18 @@ Understanding how performance scales with increasing security requirements helps
 The scaling is sub-quadratic because the NTT cost (O(n log n)) is fixed — only the number of polynomial multiplications (proportional to k²) increases. Moving from Level 1 to Level 5 roughly doubles the cost, a much gentler scaling than RSA (where doubling the security level requires roughly 8x the computation due to the cube-law of modular exponentiation cost).
 
 ## 17.3 Signature Performance Comparison
+
+**Figure 17.2 — Benchmark report template**
+
+```mermaid
+flowchart LR
+  ENV[Environment doc] --> RUN[Raw results]
+  RUN --> PCT[Percentiles]
+  PCT --> PUB[Published table]
+```
+
+*Figure 17.2 is mandatory metadata—without it, tables are not comparable.*
+
 
 ### Computational Performance (x86-64, AVX2)
 
@@ -12111,20 +12186,6 @@ These improvements come from better implementations (not algorithmic changes) an
 
 Protocols are where PQC wins or loses: **cert chains, UDP MTU, middleboxes**—especially on Indian mobile paths.
 
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
-
-**Figure 18.1 — TLS 1.3 hybrid placement**
-
-```mermaid
-sequenceDiagram
-  participant C as Client
-  participant S as Server
-  C->>S: ClientHello key_share hybrid
-  S->>C: ServerHello + cert chain PQC sig
-```
-
----
-
 ## 18.1 Transport Layer Security (TLS)
 
 TLS is the most widely deployed cryptographic protocol on the Internet, securing web traffic, API communications, email transmission, and countless other application-layer protocols. Its migration to PQC is both the highest priority and the most visible indicator of progress.
@@ -12140,6 +12201,21 @@ Authentication, by contrast, is a real-time property — forging a signature onl
 ### Hybrid Key Exchange in TLS 1.3
 
 The IETF has standardized hybrid key exchange mechanisms that combine a classical algorithm (such as X25519 or P-256 ECDH) with a post-quantum KEM (such as ML-KEM). The hybrid approach ensures that security is maintained even if one of the component algorithms is broken — whether by a quantum computer defeating the classical algorithm or by an unforeseen cryptanalytic breakthrough against the post-quantum algorithm.
+
+**Figure 18.1 — TLS 1.3 hybrid key exchange (RFC 8446 + hybrid groups)**
+
+```mermaid
+sequenceDiagram
+  participant C as Client
+  participant S as Server
+  C->>S: ClientHello + key_share (X25519 + ML-KEM-768)
+  S->>C: ServerHello + key_share + EncryptedExtensions
+  Note over C,S: ss = HKDF(X25519_ss || ML-KEM_ss)
+  C->>S: Finished
+  S->>C: Finished
+```
+
+*Figure 18.1 maps where hybrid bytes appear in the handshake flight.*
 
 **Standard approach (IETF RFC 9370 and related drafts):**
 
@@ -12258,18 +12334,21 @@ Major deployments of PQC in TLS have already occurred. Google Chrome enabled X25
 - Some middleboxes initially failed on larger ClientHello messages (now largely resolved)
 
 
-**Figure 18.2 — PKI chain with PQC signatures**
-
-```mermaid
-flowchart TB
-  Root[Root CA ML-DSA] --> ICA[Issuing CA]
-  ICA --> Leaf[Server cert]
-  Leaf --> TLS[TLS handshake]
-```
-
 ## 18.2 Public Key Infrastructure (PKI)
 
 Public Key Infrastructure provides the trust framework that underpins TLS, email security, code signing, and document verification. Migrating PKI to PQC is both essential and complex because of the deep interdependencies across the certificate ecosystem.
+
+**Figure 18.2 — X.509 PKI chain with PQC signatures**
+
+```mermaid
+flowchart TB
+  ROOT[Root CA ML-DSA-87 offline] --> INT[Intermediate ML-DSA-65]
+  INT --> EE[End-entity ML-DSA-44/65]
+  EE --> TLS[TLS Certificate message]
+  TLS --> CV[CertificateVerify signature]
+```
+
+*Figure 18.2 shows why intermediate CA certificates dominate handshake size growth.*
 
 ### X.509 Certificate Adaptations
 
@@ -12968,8 +13047,6 @@ The signature size is the primary concern for V2X. DSRC (802.11p) channels have 
 
 ---
 
----
-
 # PART V — MIGRATION AND THE FUTURE
 
 
@@ -12978,20 +13055,6 @@ The signature size is the primary concern for V2X. DSRC (802.11p) channels have 
 # Chapter 19: Cryptographic Agility and Migration Strategies
 
 Migration is a **program**, not a library upgrade. We sequence discover → pilot → mandate → retire.
-
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
-
-**Figure 19.1 — Migration program phases**
-
-```mermaid
-flowchart LR
-  D[Discover] --> P[Prioritize HNDL]
-  P --> I[Pilot hybrid]
-  I --> S[Scale]
-  S --> R[Retire RSA ECC]
-```
-
----
 
 ## 19.1 The Scale of the Challenge
 
@@ -13012,15 +13075,20 @@ Yet the transition is achievable. It has already begun, with major deployments o
 > **Author's note:** Agility means **ops can change algorithms** without a monolith redeploy.
 
 
-**Figure 19.2 — CBOM-driven migration**
+## 19.2 Cryptographic Agility
+
+**Figure 19.1 — Enterprise migration phases**
 
 ```mermaid
 flowchart LR
-  CBOM[CBOM inventory] --> RISK[Risk score]
-  RISK --> ROAD[Roadmap]
+  D[Discover CBOM] --> P[Prioritize HNDL]
+  P --> I[Pilot hybrid]
+  I --> S[Scale]
+  S --> R[Retire classical PK]
 ```
 
-## 19.2 Cryptographic Agility
+*Figure 19.1 is the program plan we map to steering committees.*
+
 
 ### Definition and Importance
 
@@ -13191,6 +13259,17 @@ The prioritization must also account for dependencies: a lower-priority system t
 ## 19.4 Cryptographic Inventory
 
 The cryptographic inventory is the foundation of any migration effort. Without a comprehensive understanding of what cryptography is in use, where, and why, migration planning is guesswork.
+
+**Figure 19.2 — Cryptographic agility architecture**
+
+```mermaid
+flowchart TB
+  APP[Application] --> API[crypto_* API]
+  API --> CFG[Policy config]
+  CFG --> LIB[liboqs/provider]
+```
+
+*Figure 19.2: agility is an API/config layer, not a one-off library swap.*
 
 ### What to Inventory
 
@@ -14027,17 +14106,6 @@ Reporting these metrics regularly (monthly or quarterly) to executive stakeholde
 
 If you cannot list your algorithms, you cannot claim PQC readiness—CBOM is the **bill of health** for crypto debt.
 
-**Figure 20.1 — CBOM data model**
-
-```mermaid
-flowchart TB
-  APP[Application] --> LIB[Crypto library]
-  LIB --> ALG[Algorithms + params]
-  ALG --> QV[Quantum vulnerability flag]
-```
-
----
-
 ## 20.1 What Is a CBOM?
 
 A **Cryptographic Bill of Materials (CBOM)** is a structured, machine-readable inventory of all cryptographic assets, dependencies, configurations, and implementations within a system, application, or organization. It answers the fundamental question that most organizations cannot today: "What cryptography are we using, where is it deployed, how is it configured, and what is its quantum vulnerability status?"
@@ -14079,18 +14147,20 @@ Before CBOM emerged as a discipline, organizations attempted to track cryptograp
 CBOM addresses all of these limitations through automation, standardization, and continuous maintenance — principles borrowed from the SBOM world but adapted for the unique characteristics of cryptographic assets.
 
 
-**Figure 20.2 — CBOM in CI/CD**
-
-```mermaid
-flowchart LR
-  Build[Build pipeline] --> SBOM[SBOM]
-  SBOM --> CBOM[CBOM scan]
-  CBOM --> Gate[Release gate]
-```
-
 ## 20.2 Why CBOM Matters for PQC Migration
 
 The post-quantum cryptography transition represents the largest coordinated change to cryptographic infrastructure in the history of computing. Every RSA key, every ECDSA signature, every ECDH key exchange across the global technology stack must eventually be replaced or supplemented. Without comprehensive visibility into what currently exists, this transition cannot succeed.
+
+**Figure 20.1 — CBOM entity model**
+
+```mermaid
+flowchart TB
+  SVC[Service] --> LIB[Crypto library v]
+  LIB --> ALG[Algorithm + params]
+  ALG --> Q[Quantum-vulnerable flag]
+```
+
+*Figure 20.1 is the schema teams export to GRC tools.*
 
 ### Visibility: Seeing the Full Picture
 
@@ -14438,6 +14508,19 @@ The most effective CBOM programs combine all four methods to maximize coverage a
 Cross-referencing findings across methods provides confidence: if static analysis shows RSA-2048 in the source code, and network analysis confirms RSA-2048 in TLS handshakes, and configuration shows RSA-2048 in the certificate, the finding is validated from multiple angles.
 
 ## 20.5 Building and Maintaining a CBOM
+
+**Figure 20.2 — CBOM in CI/CD gate**
+
+```mermaid
+flowchart LR
+  BUILD[Build] --> SCAN[CBOM scan]
+  SCAN --> GATE{Policy pass?}
+  GATE -->|yes| REL[Release]
+  GATE -->|no| FAIL[Block]
+```
+
+*Figure 20.2 shows how CBOM blocks releases when RSA persists on HNDL paths.*
+
 
 ### Phase 1: Scope Definition
 
@@ -15140,22 +15223,20 @@ Organizations operating across multiple environments need a unified CBOM view:
 
 Policy sets deadlines; **your stack sets feasibility**. We map global mandates and India's parallel track.
 
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
+## 21.1 Government Programs and Mandates
+
+Governments worldwide have recognized that the quantum threat to cryptographic infrastructure requires coordinated, mandated action. Unlike many cybersecurity improvements that can be left to market forces, PQC migration involves a tight timeline, massive coordination requirements, and national security implications that demand government leadership. This section surveys the major government programs driving PQC adoption.
 
 **Figure 21.1 — Policy → engineering feedback loop**
 
 ```mermaid
 flowchart LR
-  POL[NIST FIPS / CNSA / EU] --> PROC[Procurement]
-  PROC --> ENG[Engineering CBOM]
-  ENG --> AUDIT[Audit evidence]
+  POL[Policy NIST/CNSA/EU] --> PROC[Procurement]
+  PROC --> ENG[Engineering CBOM + tests]
+  ENG --> AUD[Audit evidence]
 ```
 
----
-
-## 21.1 Government Programs and Mandates
-
-Governments worldwide have recognized that the quantum threat to cryptographic infrastructure requires coordinated, mandated action. Unlike many cybersecurity improvements that can be left to market forces, PQC migration involves a tight timeline, massive coordination requirements, and national security implications that demand government leadership. This section surveys the major government programs driving PQC adoption.
+*Figure 21.1 links regulation to measurable engineering artifacts—not slide decks.*
 
 ### United States
 
@@ -15360,6 +15441,21 @@ China's approach to PQC combines elements of independent development with select
 > **Author's note:** Align engineering to **both** NIST timelines and India's NQM/RBI/NCIIPC tracks—not either-or.
 
 **India (NCIIPC and MeitY):**
+
+India's PQC path runs in parallel with NIST: National Quantum Mission funding, sector guidance from NCIIPC, and RBI operational risk for payment rails. **Figure 21.2** maps the stakeholders we see in every domestic readiness workshop.
+
+**Figure 21.2 — India PQC stakeholder map**
+
+```mermaid
+flowchart TB
+  MeitY[MeitY / National Quantum Mission] --> Sect[CERT-In sector programs]
+  RBI[RBI payment system risk] --> Banks[Banks / UPI ecosystem]
+  NCIIPC[NCIIPC CII guidance] --> OPS[Critical infrastructure operators]
+  STQC[STQC product testing] --> Vendors[Certified vendors]
+  Academia[IIT ISI IISc] --> Research[PQC analysis + talent]
+```
+
+*Figure 21.2 is the India-specific overlay—verify each box against the latest MeitY/RBI circular.*
 
 - National Quantum Mission (2023, ₹6,003 crore / ~$730M) includes cryptographic security as a key deliverable
 - NCIIPC (National Critical Information Infrastructure Protection Centre) developing PQC guidelines for India's critical sectors
@@ -15921,17 +16017,6 @@ Organizations are funding PQC migration through several approaches:
 
 Standards froze **first-generation** PQC; research on FHE, ZK, and leaner signatures continues—read this chapter to avoid surprise.
 
-**Figure 22.1 — Research → future standards funnel**
-
-```mermaid
-flowchart TD
-  R[Research prototypes] --> E[Industry pilots]
-  E --> N[NIST additional calls]
-  N --> F[Future FIPS]
-```
-
----
-
 ## 22.1 The Evolving Landscape
 
 Post-quantum cryptography is not a static field that concluded with the publication of FIPS 203, 204, and 205 in August 2024. Those standards represent a critical milestone — the transition from research to deployment — but they are emphatically a beginning rather than an end. Significant research challenges remain across nearly every dimension of cryptographic science, and the solutions to these challenges will shape the security landscape for decades to come.
@@ -15941,18 +16026,20 @@ The standardized algorithms (ML-KEM, ML-DSA, SLH-DSA) were selected for their co
 We survey the frontiers of PQC research: advanced primitives being built from PQC-hard problems, open problems whose solutions would transform entire application domains, emerging application areas requiring specialized PQC solutions, and the long-term trajectory of the field. For practitioners, We provide a roadmap of what to expect and when. For researchers, it maps the highest-impact open problems where contributions would have disproportionate real-world impact.
 
 
-**Figure 22.2 — Research to production path**
-
-```mermaid
-flowchart LR
-  Paper[Paper] --> PoC[PoC lib]
-  PoC --> Pilot[Pilot]
-  Pilot --> Std[Standard]
-```
-
 ## 22.2 Advanced Cryptographic Primitives from PQC Assumptions
 
 The hard problems underlying PQC — primarily lattice problems like LWE and Module-LWE — support far richer cryptographic constructions than basic encryption and signatures. The lattice world offers a uniquely powerful algebraic structure that enables advanced primitives that have no practical constructions from classical assumptions like RSA or discrete logarithms.
+
+**Figure 22.1 — Research → standards funnel**
+
+```mermaid
+flowchart TD
+  R[Research] --> P[Pilot]
+  P --> N[NIST track]
+  N --> F[Future FIPS]
+```
+
+*Figure 22.1 sets expectations: FHE/ZK today are not TLS drop-ins.*
 
 ### Fully Homomorphic Encryption (FHE)
 
@@ -16109,6 +16196,17 @@ Several signature schemes achieve substantially smaller signatures than ML-DSA, 
 - **Incremental signatures:** Efficiently updating a signature when the message changes slightly, without re-signing from scratch. Useful for signed data structures that evolve over time.
 
 ## 22.4 Post-Quantum Blockchain and Distributed Systems
+
+**Figure 22.2 — Generation-2 capability map**
+
+```mermaid
+flowchart LR
+  NOW[ML-KEM ML-DSA SLH] --> NEAR[FN-DSA HQC]
+  NEAR --> LAB[FHE PQC-ZK]
+```
+
+*Figure 22.2 separates deploy-now (KEM/sign) from lab-grade (FHE, PQC-ZK).*
+
 
 ### Challenges
 
@@ -16524,8 +16622,6 @@ Several domains offer research opportunities with limited current attention:
 **Deployment takeaway:** Build agility so future algorithm drops do not repeat today's migration pain.
 
 *Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
-
----
 
 ---
 

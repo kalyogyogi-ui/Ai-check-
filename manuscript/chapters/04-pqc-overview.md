@@ -2,19 +2,6 @@
 
 We compare families the way architects do: **assumption, size, speed, maturity**—not fan-club loyalty.
 
-**Figure 4.1 — Family → typical use**
-
-```mermaid
-flowchart LR
-  L[Lattice] --> KEM[ML-KEM / ML-DSA]
-  C[Code] --> MCE[McEliece / HQC]
-  H[Hash] --> SLH[SLH-DSA / XMSS]
-  M[Multivariate] --> UOV[UOV / MAYO eval]
-  I[Isogeny] --> EXP[Research signatures]
-```
-
----
-
 ## 4.1 Design Principles of Post-Quantum Algorithms
 
 The construction of post-quantum cryptographic algorithms is guided by a set of interrelated design principles that balance theoretical rigor with engineering pragmatism. Understanding these principles is essential for evaluating and selecting PQC schemes.
@@ -54,6 +41,18 @@ The PQC transition introduces unprecedented uncertainty. No single hardness assu
 ## 4.2 The Five Families of PQC
 
 Post-quantum cryptography encompasses five major algorithm families, each rooted in fundamentally different mathematical structures. These families represent decades of research across algebraic geometry, coding theory, combinatorics, and number theory.
+
+**Figure 4.1 — PQC algorithm families and typical roles**
+
+```mermaid
+flowchart TB
+  L[Lattice] --> KEM[ML-KEM]
+  L --> SIG[ML-DSA]
+  C[Code] --> HQC[HQC / McEliece]
+  H[Hash] --> SLH[SLH-DSA]
+```
+
+*Figure 4.1 is our family picker for standards committees and architecture boards.*
 
 ### 4.2.1 Lattice-Based Cryptography
 
@@ -223,6 +222,21 @@ Isogeny-based cryptography offers the smallest key sizes and signatures of any P
 The SIDH catastrophe demonstrated that isogeny-based assumptions are less mature and more fragile than initially hoped. Computational efficiency is poor — even CSIDH key exchange takes tens of milliseconds, orders of magnitude slower than lattice alternatives. The mathematical theory is deep and accessible to fewer cryptanalysts, meaning less aggregate effort has been applied to finding attacks. Kuperberg's algorithm creates ongoing uncertainty about the quantum security of commutative isogeny problems. The field is evolving rapidly, with new constructions and attacks appearing frequently, making it premature for high-assurance deployment.
 
 ## 4.3 Comparative Analysis of PQC Families
+
+Understanding trade-offs between families requires comparing size, speed, and maturity on the same axes. **Figure 4.2** highlights that bandwidth—not CPU alone—often dominates on mobile paths.
+
+**Figure 4.2 — Size/speed trade-off axes (conceptual)**
+
+```mermaid
+flowchart LR
+  SIZE[Smaller keys/certs] --- SPEED[Faster verify]
+  LATTICE[Lattice] --> BAL[Balanced default]
+  HASH[Hash sigs] --> LARGE[Large signatures]
+```
+
+*Figure 4.2 reminds teams that **bytes on the wire** often dominate Indian mobile latency more than CPU.*
+
+### Performance and size comparison
 
 Understanding the trade-offs between PQC families requires examining multiple dimensions simultaneously. The following comparison synthesizes the key properties:
 

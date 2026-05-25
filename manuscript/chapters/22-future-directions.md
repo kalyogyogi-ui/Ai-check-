@@ -2,17 +2,6 @@
 
 Standards froze **first-generation** PQC; research on FHE, ZK, and leaner signatures continues—read this chapter to avoid surprise.
 
-**Figure 22.1 — Research → future standards funnel**
-
-```mermaid
-flowchart TD
-  R[Research prototypes] --> E[Industry pilots]
-  E --> N[NIST additional calls]
-  N --> F[Future FIPS]
-```
-
----
-
 ## 22.1 The Evolving Landscape
 
 Post-quantum cryptography is not a static field that concluded with the publication of FIPS 203, 204, and 205 in August 2024. Those standards represent a critical milestone — the transition from research to deployment — but they are emphatically a beginning rather than an end. Significant research challenges remain across nearly every dimension of cryptographic science, and the solutions to these challenges will shape the security landscape for decades to come.
@@ -22,18 +11,20 @@ The standardized algorithms (ML-KEM, ML-DSA, SLH-DSA) were selected for their co
 We survey the frontiers of PQC research: advanced primitives being built from PQC-hard problems, open problems whose solutions would transform entire application domains, emerging application areas requiring specialized PQC solutions, and the long-term trajectory of the field. For practitioners, We provide a roadmap of what to expect and when. For researchers, it maps the highest-impact open problems where contributions would have disproportionate real-world impact.
 
 
-**Figure 22.2 — Research to production path**
-
-```mermaid
-flowchart LR
-  Paper[Paper] --> PoC[PoC lib]
-  PoC --> Pilot[Pilot]
-  Pilot --> Std[Standard]
-```
-
 ## 22.2 Advanced Cryptographic Primitives from PQC Assumptions
 
 The hard problems underlying PQC — primarily lattice problems like LWE and Module-LWE — support far richer cryptographic constructions than basic encryption and signatures. The lattice world offers a uniquely powerful algebraic structure that enables advanced primitives that have no practical constructions from classical assumptions like RSA or discrete logarithms.
+
+**Figure 22.1 — Research → standards funnel**
+
+```mermaid
+flowchart TD
+  R[Research] --> P[Pilot]
+  P --> N[NIST track]
+  N --> F[Future FIPS]
+```
+
+*Figure 22.1 sets expectations: FHE/ZK today are not TLS drop-ins.*
 
 ### Fully Homomorphic Encryption (FHE)
 
@@ -190,6 +181,17 @@ Several signature schemes achieve substantially smaller signatures than ML-DSA, 
 - **Incremental signatures:** Efficiently updating a signature when the message changes slightly, without re-signing from scratch. Useful for signed data structures that evolve over time.
 
 ## 22.4 Post-Quantum Blockchain and Distributed Systems
+
+**Figure 22.2 — Generation-2 capability map**
+
+```mermaid
+flowchart LR
+  NOW[ML-KEM ML-DSA SLH] --> NEAR[FN-DSA HQC]
+  NEAR --> LAB[FHE PQC-ZK]
+```
+
+*Figure 22.2 separates deploy-now (KEM/sign) from lab-grade (FHE, PQC-ZK).*
+
 
 ### Challenges
 

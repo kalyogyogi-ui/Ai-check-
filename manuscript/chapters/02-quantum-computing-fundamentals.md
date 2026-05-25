@@ -2,20 +2,25 @@
 
 We keep physics intuition where it explains **why Shor wins**; we skip deep Hilbert-space formalism unless you are proving theorems.
 
-**Figure 2.1 — Qubit vs classical bit (decision view)**
-
-```mermaid
-flowchart LR
-  C[Classical: one of 2^n states] --> CQ[Deterministic evolution]
-  Q[Quantum: superposition] --> QQ[Unitary + measure]
-  QQ --> Shor[Enables period finding]
-```
-
----
-
 ## 2.1 Classical vs. Quantum Computation
 
 To understand why quantum computers pose an existential threat to much of modern cryptography, we must first develop a rigorous understanding of how quantum computation differs from classical computation at the most fundamental level. The distinction is not merely one of speed — quantum computers operate according to entirely different physical principles, enabling qualitatively new forms of information processing.
+
+**Figure 2.1 — Classical bit vs qubit (conceptual)**
+
+```mermaid
+flowchart TB
+  subgraph classical [Classical n-bit register]
+    C1[Exactly one of 2^n states]
+  end
+  subgraph quantum [Quantum n-qubit register]
+    Q1[Superposition over 2^n amplitudes]
+    Q2[Measure → one n-bit string]
+  end
+  classical -.->|not parallel search| quantum
+```
+
+*Figure 2.1 contrasts state space: one classical string versus amplitudes over 2^n basis states.*
 
 ### Classical Bits and Deterministic Computation
 
@@ -68,17 +73,20 @@ However, it is critical to understand what this does NOT mean. A common misconce
 The true power of quantum computation lies in the ability to manipulate amplitudes through quantum gates such that, after a carefully designed sequence of operations, the probability of measuring a desired answer is high. This manipulation relies on the phenomena of **entanglement** and **interference** — the genuine sources of quantum computational advantage.
 
 
-**Figure 2.2 — Quantum circuit abstraction**
-
-```mermaid
-flowchart LR
-  Init[Initialize] --> U[Unitary gates]
-  U --> M[Measure classical bits]
-```
-
 ## 2.2 Key Quantum Phenomena
 
 Three quantum mechanical phenomena underpin the power of quantum computation: superposition, entanglement, and interference. While superposition provides the exponential state space, entanglement creates correlations that enable efficient information processing across that space, and interference provides the mechanism for extracting useful answers.
+
+**Figure 2.2 — Quantum circuit model**
+
+```mermaid
+flowchart LR
+  INIT[|0…0⟩ prepare] --> U[Unitary gates U]
+  U --> INT[Interference builds peaks]
+  INT --> MEAS[Measure → classical bits]
+```
+
+*Figure 2.2 is the abstraction Shor's algorithm instantiates: unitary evolution then measurement.*
 
 ### Superposition in Depth
 
@@ -208,6 +216,17 @@ Common universal gate sets include:
 ## 2.4 Quantum Computational Complexity
 
 Understanding the computational power of quantum computers requires the framework of computational complexity theory — the study of what problems can be solved efficiently with given computational resources.
+
+**Figure 2.3 — Physical vs logical qubit**
+
+```mermaid
+flowchart TB
+  PHY[10^6 physical qubits] --> QEC[Quantum error correction]
+  QEC --> LOG[Thousands of logical qubits]
+  LOG --> CRQC[CRQC needs millions logical for Shor on RSA-2048]
+```
+
+*Figure 2.3 explains why marketing qubit counts ≠ cryptographically relevant logical qubits.*
 
 ### BQP: Bounded-Error Quantum Polynomial Time
 

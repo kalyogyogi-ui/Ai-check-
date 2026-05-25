@@ -2,20 +2,6 @@
 
 Protocols are where PQC wins or loses: **cert chains, UDP MTU, middleboxes**—especially on Indian mobile paths.
 
-> **Author's note (India deployment):** Validate any regulatory reference (RBI, MeitY, CERT-In, DPDP retention) against the **current circular** before you bake it into contracts. We describe directionally what we see in the field, not legal advice.
-
-**Figure 18.1 — TLS 1.3 hybrid placement**
-
-```mermaid
-sequenceDiagram
-  participant C as Client
-  participant S as Server
-  C->>S: ClientHello key_share hybrid
-  S->>C: ServerHello + cert chain PQC sig
-```
-
----
-
 ## 18.1 Transport Layer Security (TLS)
 
 TLS is the most widely deployed cryptographic protocol on the Internet, securing web traffic, API communications, email transmission, and countless other application-layer protocols. Its migration to PQC is both the highest priority and the most visible indicator of progress.
@@ -31,6 +17,21 @@ Authentication, by contrast, is a real-time property — forging a signature onl
 ### Hybrid Key Exchange in TLS 1.3
 
 The IETF has standardized hybrid key exchange mechanisms that combine a classical algorithm (such as X25519 or P-256 ECDH) with a post-quantum KEM (such as ML-KEM). The hybrid approach ensures that security is maintained even if one of the component algorithms is broken — whether by a quantum computer defeating the classical algorithm or by an unforeseen cryptanalytic breakthrough against the post-quantum algorithm.
+
+**Figure 18.1 — TLS 1.3 hybrid key exchange (RFC 8446 + hybrid groups)**
+
+```mermaid
+sequenceDiagram
+  participant C as Client
+  participant S as Server
+  C->>S: ClientHello + key_share (X25519 + ML-KEM-768)
+  S->>C: ServerHello + key_share + EncryptedExtensions
+  Note over C,S: ss = HKDF(X25519_ss || ML-KEM_ss)
+  C->>S: Finished
+  S->>C: Finished
+```
+
+*Figure 18.1 maps where hybrid bytes appear in the handshake flight.*
 
 **Standard approach (IETF RFC 9370 and related drafts):**
 
@@ -149,18 +150,21 @@ Major deployments of PQC in TLS have already occurred. Google Chrome enabled X25
 - Some middleboxes initially failed on larger ClientHello messages (now largely resolved)
 
 
-**Figure 18.2 — PKI chain with PQC signatures**
-
-```mermaid
-flowchart TB
-  Root[Root CA ML-DSA] --> ICA[Issuing CA]
-  ICA --> Leaf[Server cert]
-  Leaf --> TLS[TLS handshake]
-```
-
 ## 18.2 Public Key Infrastructure (PKI)
 
 Public Key Infrastructure provides the trust framework that underpins TLS, email security, code signing, and document verification. Migrating PKI to PQC is both essential and complex because of the deep interdependencies across the certificate ecosystem.
+
+**Figure 18.2 — X.509 PKI chain with PQC signatures**
+
+```mermaid
+flowchart TB
+  ROOT[Root CA ML-DSA-87 offline] --> INT[Intermediate ML-DSA-65]
+  INT --> EE[End-entity ML-DSA-44/65]
+  EE --> TLS[TLS Certificate message]
+  TLS --> CV[CertificateVerify signature]
+```
+
+*Figure 18.2 shows why intermediate CA certificates dominate handshake size growth.*
 
 ### X.509 Certificate Adaptations
 

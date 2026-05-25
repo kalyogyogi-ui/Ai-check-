@@ -2,18 +2,6 @@
 
 Standards are not finished—**diversity algorithms** matter for insurance, not for day-one TLS.
 
-**Figure 14.1 — Portfolio beyond FIPS 203–205**
-
-```mermaid
-flowchart LR
-  CORE[FIPS 203 204 205] --> DIV[Diversity layer]
-  DIV --> FN[FN-DSA]
-  DIV --> HQC[HQC KEM]
-  DIV --> MCE[Classic McEliece]
-```
-
----
-
 ## 14.1 Beyond the Primary Standards
 
 While FIPS 203, 204, and 205 provide the foundation for post-quantum cryptography—covering key encapsulation (ML-KEM), general-purpose digital signatures (ML-DSA), and hash-based signatures (SLH-DSA)—they do not represent the full scope of NIST's post-quantum standardization effort. The three primary standards were selected to provide immediate, deployable protection against quantum threats using algorithms that balance security, performance, and implementation simplicity. However, the NIST PQC process has always recognized that no single algorithm family provides optimal solutions for every use case, and that algorithmic diversity is essential for long-term cryptographic resilience.
@@ -23,16 +11,20 @@ Several factors motivate the continued evaluation and standardization of additio
 We survey the algorithms beyond the primary standards: those selected for standardization but not yet finalized (FN-DSA), those providing diversity for key encapsulation (Classic McEliece, HQC, BIKE), the additional signature candidates under evaluation in NIST's separate call, the already-standardized stateful hash-based signatures (XMSS/LMS), and guidance for algorithm selection across diverse deployment scenarios.
 
 
-**Figure 14.2 — When to reach beyond core FIPS**
+## 14.2 FN-DSA (FALCON)
+
+**Figure 14.1 — Portfolio beyond core FIPS**
 
 ```mermaid
-flowchart TD
-  Q{Need diversity or special size?}
-  Q -->|yes| ALT[FN-DSA / HQC / McEliece]
-  Q -->|no| CORE[FIPS 203-205 only]
+flowchart TB
+  CORE[FIPS 203-205] --> DIV[Diversity]
+  DIV --> FN[FN-DSA]
+  DIV --> HQC[HQC]
+  DIV --> MCE[Classic McEliece]
 ```
 
-## 14.2 FN-DSA (FALCON)
+*Figure 14.1 is the insurance layer—deploy after ML-KEM/ML-DSA baseline.*
+
 
 ### Overview and History
 
@@ -270,6 +262,18 @@ While HQC is measurably slower and larger than ML-KEM, its performance is still 
 HQC's primary role is as **insurance**: organizations that want maximum resilience can deploy both ML-KEM and HQC (in a hybrid configuration or as alternatives), ensuring that a failure of lattice-based assumptions does not leave them vulnerable. For systems where only a single KEM is practical, ML-KEM remains the default recommendation due to its superior efficiency. HQC is the fallback—the "break glass in case of lattice emergency" algorithm.
 
 ## 14.5 BIKE (Bit Flipping Key Encapsulation)
+
+**Figure 14.2 — Selection decision tree**
+
+```mermaid
+flowchart TD
+  Q{Need diversity?}
+  Q -->|yes| ALT[Add FN-DSA / HQC / McEliece]
+  Q -->|no| CORE[Core FIPS only]
+```
+
+*Use Figure 14.2 when a program demands non-lattice assumptions.*
+
 
 ### Overview and Design Philosophy
 

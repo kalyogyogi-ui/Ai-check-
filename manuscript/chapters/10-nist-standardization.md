@@ -2,19 +2,6 @@
 
 NIST's process is the **global clock** for procurement—even when your data never leaves India.
 
-**Figure 10.1 — NIST PQC phases**
-
-```mermaid
-timeline
-  title NIST PQC (high level)
-  2016 : Competition announced
-  2022 : Rainbow SIKE breaks
-  2024 : FIPS 203 204 205
-  2025+ : FN-DSA HQC tracks
-```
-
----
-
 ## 10.1 Why NIST?
 
 ### A Legacy of Cryptographic Standards
@@ -46,16 +33,20 @@ Several factors make NIST the natural choice for post-quantum standardization ra
 The post-quantum standardization effort was unprecedented in scope even by NIST's standards. Unlike AES (one block cipher) or SHA-3 (one hash function), this effort needed to standardize replacements for multiple cryptographic primitives—key encapsulation mechanisms, digital signatures, and potentially more—across different mathematical foundations. The threat model was also unusual: standardizing defenses against an adversary (a large-scale quantum computer) that did not yet exist but whose capabilities could be precisely characterized through quantum computational complexity theory.
 
 
-**Figure 10.2 — Round funnel**
+## 10.2 Timeline of the PQC Standardization
+
+**Figure 10.1 — NIST PQC timeline**
 
 ```mermaid
-flowchart TD
-  R1[69 schemes R1] --> R2[26 R2]
-  R2 --> R3[Finalists + breaks]
-  R3 --> FIPS[FIPS 203 204 205]
+timeline
+  title NIST PQC milestones
+  2016 : Call for proposals
+  2022 : SIKE Rainbow breaks
+  2024 : FIPS 203 204 205
 ```
 
-## 10.2 Timeline of the PQC Standardization
+*Figure 10.1 anchors procurement language to competition milestones.*
+
 
 ### Pre-Competition Phase (2014-2016)
 
@@ -202,6 +193,17 @@ NIST's evaluation balanced multiple dimensions, explicitly acknowledging that no
 ## 10.4 Why Kyber/ML-KEM Won
 
 The selection of CRYSTALS-Kyber as the primary KEM standard over three other lattice finalists (NTRU, SABER) and one code-based finalist (Classic McEliece) was among NIST's most closely debated decisions. The three lattice KEMs were remarkably close in overall quality, and NIST's decision ultimately rested on a combination of technical advantages and practical considerations.
+
+**Figure 10.2 — Round-down funnel**
+
+```mermaid
+flowchart TD
+  R1[82 submissions] --> R2[26 round 2]
+  R2 --> F[7 finalists]
+  F --> STD[FIPS + ongoing HQC FN-DSA]
+```
+
+*Figure 10.2 shows why diversity algorithms survived as alternates.*
 
 ### Kyber's Comprehensive Advantages
 

@@ -2,17 +2,6 @@
 
 Hybrids are our default recommendation for production TLS until you have a written reason not to.
 
-**Figure 15.1 — Hybrid shared secret combiner**
-
-```mermaid
-flowchart LR
-  C1[X25519 ss] --> HKDF[HKDF-Extract/Expand]
-  C2[ML-KEM-768 ss] --> HKDF
-  HKDF --> KEYS[TLS handshake keys]
-```
-
----
-
 > **Author's note:** Measure hybrid overhead on **your** POPs; Indian mobile RTT amplifies byte costs.
 
 ## 15.1 The Case for Hybrid Approaches
@@ -52,6 +41,31 @@ This is formalized differently for different primitives:
 This property distinguishes a true hybrid construction from merely "running both algorithms and hoping one works." The construction must ensure that the security of the whole is at least as strong as the stronger component, under formal cryptographic definitions.
 
 ## 15.2 Hybrid Key Exchange
+
+Production hybrid TLS combines a classical ECDH shared secret with an ML-KEM shared secret, then feeds both into HKDF. **Figure 15.1** is the combiner architecture every profile must implement.
+
+**Figure 15.1 — Hybrid TLS shared-secret architecture**
+
+```mermaid
+flowchart TB
+  subgraph client [Client]
+    C1[X25519 ephemeral]
+    C2[ML-KEM encaps]
+  end
+  subgraph server [Server]
+    S1[X25519 ephemeral]
+    S2[ML-KEM ciphertext]
+  end
+  C1 --> SS1[classical ss]
+  S1 --> SS1
+  C2 --> SS2[pqc ss]
+  S2 --> SS2
+  SS1 --> HKDF[HKDF-Extract transcript]
+  SS2 --> HKDF
+  HKDF --> KEYS[TLS handshake keys]
+```
+
+*Figure 15.1 shows the combiner every production hybrid profile must implement.*
 
 ### Concatenated Key Derivation
 
@@ -161,6 +175,24 @@ WireGuard, a modern VPN protocol valued for its simplicity and performance, has 
 **Key insight for VPNs:** VPN tunnels are typically long-lived (hours to days), and the handshake overhead is amortized across millions of data packets. Even several kilobytes of additional handshake data have negligible impact on overall throughput.
 
 ## 15.3 Hybrid Signatures
+
+Hybrid signatures bind classical and post-quantum components so forgeries must break **both** schemes.
+
+**Figure 15.2 — Hybrid signature verification**
+
+```mermaid
+flowchart LR
+  M[Message] --> CS[Classical sig verify]
+  M --> PS[ML-DSA verify]
+  CS --> AND{Both OK?}
+  PS --> AND
+  AND -->|yes| OK[Accept]
+  AND -->|no| REJ[Reject]
+```
+
+*Figure 15.2: a hybrid signature is valid only if **both** classical and PQC verify.*
+
+### Construction patterns
 
 Hybrid signatures present significantly more design complexity than hybrid key exchange. While key exchange has a natural combination point (the KDF merging two shared secrets), signatures have multiple valid architectures with different security properties, compatibility characteristics, and implementation complexities.
 
