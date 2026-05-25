@@ -13,8 +13,6 @@ flowchart TB
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 13.1 Overview
 
 SLH-DSA (Stateless Hash-Based Digital Signature Algorithm), standardized as FIPS 205 by NIST in August 2024, represents the most conservative approach to post-quantum digital signatures. Derived from the SPHINCS+ submission, SLH-DSA occupies a unique position in the NIST post-quantum portfolio: its security rests solely on the well-understood properties of cryptographic hash functions — specifically second-preimage resistance and pseudorandomness — without relying on any algebraic or number-theoretic hardness assumptions.
@@ -782,13 +780,14 @@ The SLH-DSA design space continues to evolve:
 
 **Hardware co-design:** ASIC/FPGA designs specifically optimized for SLH-DSA's tree structure could close the performance gap with lattice-based schemes for dedicated signing appliances.
 
-**Improved security proofs:** Tighter reductions in the QROM could allow more aggressive parameter choices while maintaining provable security guarantees.
----
+**Improved security proofs:** Tighter reductions in the QROM could allow more aggressive parameter choices while maintaining provable security guarantees.---
 
-## 13.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** SLH-DSA trades signature size for hash-only assumptions; pick fast vs small parameter sets deliberately.
 
-If you only act on one idea from Chapter 13, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Embed SLH-DSA where conservative assumptions outweigh bandwidth (roots of trust, some firmware).
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

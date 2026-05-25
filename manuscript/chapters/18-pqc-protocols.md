@@ -16,8 +16,6 @@ sequenceDiagram
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 18.1 Transport Layer Security (TLS)
 
 TLS is the most widely deployed cryptographic protocol on the Internet, securing web traffic, API communications, email transmission, and countless other application-layer protocols. Its migration to PQC is both the highest priority and the most visible indicator of progress.
@@ -849,13 +847,14 @@ The signature size is the primary concern for V2X. DSRC (802.11p) channels have 
 2. **Implicit certificates:** ECQV-style implicit certificates reduce certificate overhead
 3. **Signature amortization:** Sign groups of consecutive BSMs with a single signature
 4. **Hardware acceleration:** Dedicated PQC accelerators in vehicle ECUs maintain timing requirements
-5. **Hybrid deployment:** Use ML-KEM for V2I (Vehicle-to-Infrastructure) long-lived connections; use compact PQC for V2V broadcast
----
+5. **Hybrid deployment:** Use ML-KEM for V2I (Vehicle-to-Infrastructure) long-lived connections; use compact PQC for V2V broadcast---
 
-## 18.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** TLS integrates PQC at key exchange first; PKI signature migration follows with cert chain size constraints.
 
-If you only act on one idea from Chapter 18, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Test middleboxes and CDN paths—especially mobile networks in India—before enabling PQC ciphers broadly.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

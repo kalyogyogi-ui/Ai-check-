@@ -1032,13 +1032,14 @@ Organizations need concrete metrics to track migration progress and demonstrate 
 - Cryptographic inventory completeness (percentage of systems inventoried)
 - Audit finding closure rate for quantum-related findings
 
-Reporting these metrics regularly (monthly or quarterly) to executive stakeholders maintains organizational focus and enables early identification of stalled migration efforts.
----
+Reporting these metrics regularly (monthly or quarterly) to executive stakeholders maintains organizational focus and enables early identification of stalled migration efforts.---
 
-## 19.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Migration is a program: CBOM → prioritize HNDL → pilot → scale → retire classical PK.
 
-If you only act on one idea from Chapter 19, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Cryptographic agility is configuration and ownership—not a one-time library upgrade.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

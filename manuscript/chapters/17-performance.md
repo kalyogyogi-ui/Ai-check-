@@ -1038,13 +1038,14 @@ Research into representation compression may reduce PQC communication sizes:
 | ML-KEM-768 (Cortex-M4) | 1.5 ms | 0.8-1.0 ms | 1.5-2x |
 | ML-DSA-65 Sign (Cortex-M4) | 40 ms | 20-25 ms | 1.5-2x |
 
-These improvements come from better implementations (not algorithmic changes) and assume current parameter sets remain standard.
----
+These improvements come from better implementations (not algorithmic changes) and assume current parameter sets remain standard.---
 
-## 17.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** PQC performance is multidimensional: CPU, bytes on the wire, and tail latency (especially ML-DSA signing).
 
-If you only act on one idea from Chapter 17, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Publish benchmark methodology before numbers; never compare μs figures without library and CPU disclosure.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

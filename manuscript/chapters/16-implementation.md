@@ -1144,13 +1144,14 @@ For the highest assurance levels, formal verification techniques can prove const
 - **Vale/EverCrypt:** Verified cryptographic implementations in F* with machine-checked proofs of correctness and constant-time behavior
 - **Jasmin:** Domain-specific language for cryptographic implementations with compiler-verified constant-time guarantees
 
-While formal verification of complete PQC implementations remains an active research area, verified implementations of critical sub-components (NTT, comparison, conditional selection) provide high assurance for the most sensitive code paths.
----
+While formal verification of complete PQC implementations remains an active research area, verified implementations of critical sub-components (NTT, comparison, conditional selection) provide high assurance for the most sensitive code paths.---
 
-## 16.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** PQC implementations fail on side channels before they fail on math—constant-time NTT and rejection handling are mandatory.
 
-If you only act on one idea from Chapter 16, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Mandate audited libraries; block custom lattice code without independent review.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

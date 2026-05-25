@@ -13,8 +13,6 @@ flowchart TD
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 12.1 Overview
 
 ML-DSA (Module-Lattice-Based Digital Signature Algorithm), standardized as FIPS 204 by NIST in August 2024, is the primary post-quantum digital signature standard selected through NIST's multi-year Post-Quantum Cryptography Standardization Process. Derived from the CRYSTALS-Dilithium submission, ML-DSA represents the culmination of over a decade of research into practical lattice-based signature schemes. It provides existential unforgeability under chosen-message attacks (EUF-CMA), the standard security notion for digital signatures, meaning that an adversary who can adaptively obtain signatures on messages of their choice still cannot produce a valid signature on any new message not previously queried.
@@ -614,13 +612,14 @@ As ML-DSA implementations proliferate across different languages and platforms, 
 - Context strings and domain separators are handled consistently
 - Pre-hash mode (HashML-DSA) produces compatible results across implementations
 
-The NIST Algorithm Validation Program (CAVP) provides automated testing infrastructure for certifying implementations against the standard.
----
+The NIST Algorithm Validation Program (CAVP) provides automated testing infrastructure for certifying implementations against the standard.---
 
-## 12.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** ML-DSA security requires rejection sampling; signing time has variance—capacity-plan p99.
 
-If you only act on one idea from Chapter 12, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Prefer ML-DSA-65/87 where policy allows; match parameter set to certificate hierarchy depth.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

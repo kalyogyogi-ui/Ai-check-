@@ -857,13 +857,14 @@ Based on real-world deployment experience and formal analysis, the following rec
 - Implement atomic key rotation (both keys replaced simultaneously to prevent temporal gaps).
 - Use unified revocation (revoking the credential invalidates both components).
 - Ensure backup and disaster recovery procedures handle dual key material correctly.
-- Audit that both components are consistently present in all deployed credentials.
----
+- Audit that both components are consistently present in all deployed credentials.---
 
-## 15.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Hybrid KEX concatenates classical and PQC shared secrets; security is at least as strong as the better component under standard combiners.
 
-If you only act on one idea from Chapter 15, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Default to hybrid for customer-facing TLS until your threat model and policy allow pure PQC.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

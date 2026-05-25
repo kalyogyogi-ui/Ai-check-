@@ -13,8 +13,6 @@ flowchart TB
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 7.1 The Appeal of Hash-Based Cryptography
 
 Among the families of post-quantum cryptographic schemes, hash-based signatures occupy a philosophically distinctive position. Their security relies on what cryptographers consider the **minimal possible assumption**: the existence of a secure hash function. There are no hidden algebraic structures to exploit, no lattice problems whose hardness might one day be undermined by clever algorithms, and no error-correcting codes whose parameters might prove insufficiently conservative. The entire security argument reduces to the one-wayness, second preimage resistance, and collision resistance of a well-studied hash function.
@@ -618,13 +616,14 @@ Hash-based signature operations offer substantial parallelism:
 - Merkle tree node computations at the same level are independent
 - Different hypertree layers, once lower layers complete, can overlap in computation
 
-Hardware implementations and multi-core software implementations can exploit this parallelism to significantly reduce wall-clock signing and verification times. On a 16-core processor, SLH-DSA signing can be 8–12x faster than single-threaded execution.
----
+Hardware implementations and multi-core software implementations can exploit this parallelism to significantly reduce wall-clock signing and verification times. On a 16-core processor, SLH-DSA signing can be 8–12x faster than single-threaded execution.---
 
-## 7.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Hash signatures minimize assumptions; stateful (XMSS/LMS) vs stateless (SLH-DSA) drives operations design.
 
-If you only act on one idea from Chapter 7, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Never deploy stateful schemes without hardware or HSM state discipline.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

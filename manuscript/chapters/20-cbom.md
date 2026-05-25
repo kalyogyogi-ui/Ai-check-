@@ -13,8 +13,6 @@ flowchart TB
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 20.1 What Is a CBOM?
 
 A **Cryptographic Bill of Materials (CBOM)** is a structured, machine-readable inventory of all cryptographic assets, dependencies, configurations, and implementations within a system, application, or organization. It answers the fundamental question that most organizations cannot today: "What cryptography are we using, where is it deployed, how is it configured, and what is its quantum vulnerability status?"
@@ -29,7 +27,7 @@ CBOM applies this same principle to the cryptographic dimension. When a quantum 
 
 ### Anatomy of a CBOM
 
-A comprehensive CBOM captures multiple dimensions of cryptographic usage:
+A full CBOM captures multiple dimensions of cryptographic usage:
 
 **Algorithm inventory:** Every cryptographic algorithm in use, including key sizes, modes of operation, and parameter choices. This includes not just the primary algorithms (RSA, AES, SHA) but also their specific configurations (RSA-2048-OAEP-SHA256, AES-256-GCM with 96-bit nonces).
 
@@ -127,7 +125,7 @@ Organizations attempting PQC migration without CBOM face predictable failures:
 
 ### With CBOM: The Informed Migration
 
-With a comprehensive CBOM, the same scenarios play out differently:
+With a full CBOM, the same scenarios play out differently:
 
 - **Scope query:** "Show all uses of RSA or ECDH in production systems classified as High-Value Assets" → immediate, precise migration target list with priority ordering.
 - **Dependency discovery:** CBOM relationship mapping shows all systems dependent on a vendor's ECDSA verification, flagging the risk before migration begins.
@@ -237,7 +235,7 @@ NIST Special Publication 1800-38 (Migration to Post-Quantum Cryptography) provid
 
 ### Key CBOM Fields
 
-A comprehensive CBOM record captures the following information for each cryptographic instance:
+A full CBOM record captures the following information for each cryptographic instance:
 
 | Field | Description | Example Values |
 |-------|-------------|----------------|
@@ -1099,13 +1097,14 @@ Organizations operating across multiple environments need a unified CBOM view:
 
 **9. Engage the supply chain early:** Vendor PQC readiness is often the longest-lead-time dependency. Begin vendor assessments early, include PQC requirements in procurement, and track vendor roadmaps in the CBOM.
 
-**10. Plan for the long term:** CBOM is not a project with an end date — it is an ongoing operational capability. Design the program, tooling, and team structures for sustainability, not just initial creation.
----
+**10. Plan for the long term:** CBOM is not a project with an end date — it is an ongoing operational capability. Design the program, tooling, and team structures for sustainability, not just initial creation.---
 
-## 20.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** CBOM extends SBOM with algorithms, parameters, and quantum-vulnerability flags.
 
-If you only act on one idea from Chapter 20, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Automate CBOM in CI/CD; tie findings to owners and migration waves.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

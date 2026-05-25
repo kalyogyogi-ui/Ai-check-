@@ -524,13 +524,14 @@ BSI's additional endorsement of FrodoKEM (unstructured LWE, even more conservati
 
 Throughout the eight-year process, NIST maintained remarkable transparency: publishing detailed evaluation reports explaining selection rationale, holding public workshops where community members could question decisions, and explicitly acknowledging uncertainties and trade-offs. This transparency built trust in the process and the resulting standards, even among those who might have preferred different selections.
 
-The contrast with earlier, less transparent standardization efforts (the DES controversy around S-box design, concerns about Dual_EC_DRBG) underscores how important procedural legitimacy is for cryptographic standards that the world depends on. Organizations are more willing to adopt standards they trust were selected on merit through a fair process.
----
+The contrast with earlier, less transparent standardization efforts (the DES controversy around S-box design, concerns about Dual_EC_DRBG) underscores how important procedural legitimacy is for cryptographic standards that the world depends on. Organizations are more willing to adopt standards they trust were selected on merit through a fair process.---
 
-## 10.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** NIST's open competition model produced FIPS 203–205; breaks during the process validated public review.
 
-If you only act on one idea from Chapter 10, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Align procurement language to FIPS names (ML-KEM) not legacy submission names (Kyber) in new contracts.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

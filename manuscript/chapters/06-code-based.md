@@ -13,8 +13,6 @@ flowchart LR
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 6.1 Error-Correcting Codes: Background
 
 Error-correcting codes were originally developed by Claude Shannon, Richard Hamming, and others in the late 1940s and 1950s to enable reliable communication over noisy channels. The fundamental idea is to introduce structured redundancy into transmitted messages so that errors introduced during transmission can be detected and corrected by the receiver. This mathematical framework, developed for communications engineering, turns out to provide precisely the right abstraction for building cryptographic systems resistant to quantum attacks.
@@ -596,13 +594,14 @@ The following table summarizes the practical characteristics of the major code-b
 | Encapsulation | Very fast | Fast | Moderate |
 | Decapsulation | Fast | Moderate (iterative) | Moderate |
 
-The choice between schemes depends on deployment constraints: Classic McEliece is preferred when security confidence is paramount and key distribution is not bandwidth-limited (e.g., pre-installed keys); HQC is preferred when moderate key sizes and well-understood security are both required; BIKE offers the most compact combined public-key-plus-ciphertext size but with the added complexity of managing decryption failure probability.
----
+The choice between schemes depends on deployment constraints: Classic McEliece is preferred when security confidence is paramount and key distribution is not bandwidth-limited (e.g., pre-installed keys); HQC is preferred when moderate key sizes and well-understood security are both required; BIKE offers the most compact combined public-key-plus-ciphertext size but with the added complexity of managing decryption failure probability.---
 
-## 6.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Code-based KEMs offer long confidence horizons; Classic McEliece and HQC differ sharply in key size.
 
-If you only act on one idea from Chapter 6, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Validate network MTU and storage before promising McEliece at the TLS edge.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

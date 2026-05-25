@@ -14,8 +14,6 @@ flowchart LR
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 5.1 Introduction to Lattices
 
 ### Formal Definitions
@@ -666,13 +664,14 @@ Lattice assumptions enable efficient protocols for secure multi-party computatio
 
 **Threshold signatures:** Distributing the signing capability of ML-DSA across multiple parties is an active research area. The rejection sampling in Lyubashevsky's scheme creates challenges for threshold computation (all parties must agree on whether to abort), but recent protocols achieve practical efficiency.
 
-**Homomorphic secret sharing:** Lattice-based schemes where shares support local homomorphic operations enable communication-efficient MPC for restricted function classes.
----
+**Homomorphic secret sharing:** Lattice-based schemes where shares support local homomorphic operations enable communication-efficient MPC for restricted function classes.---
 
-## 5.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Module-LWE/LWE hardness underpins ML-KEM and ML-DSA; NTT makes ring arithmetic practical.
 
-If you only act on one idea from Chapter 5, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Treat implementation leakage as the primary risk—use audited libraries and constant-time NTT.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

@@ -14,8 +14,6 @@ flowchart LR
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 14.1 Beyond the Primary Standards
 
 While FIPS 203, 204, and 205 provide the foundation for post-quantum cryptography—covering key encapsulation (ML-KEM), general-purpose digital signatures (ML-DSA), and hash-based signatures (SLH-DSA)—they do not represent the full scope of NIST's post-quantum standardization effort. The three primary standards were selected to provide immediate, deployable protection against quantum threats using algorithms that balance security, performance, and implementation simplicity. However, the NIST PQC process has always recognized that no single algorithm family provides optimal solutions for every use case, and that algorithmic diversity is essential for long-term cryptographic resilience.
@@ -728,13 +726,14 @@ The post-quantum cryptography ecosystem continues to evolve rapidly. Several tre
 
 **Standardization timeline.** NIST's additional signature evaluation is expected to complete selection by 2026-2027, with draft standards following. Organizations should monitor these developments while deploying the primary FIPS 203/204/205 standards for immediate protection.
 
-**Quantum computing progress.** Advances in quantum computing hardware—larger qubit counts, better error correction, longer coherence times—will sharpen the urgency of PQC deployment while also informing parameter selection. If quantum computers advance faster than expected, current security margins may need reassessment.
----
+**Quantum computing progress.** Advances in quantum computing hardware—larger qubit counts, better error correction, longer coherence times—will sharpen the urgency of PQC deployment while also informing parameter selection. If quantum computers advance faster than expected, current security margins may need reassessment.---
 
-## 14.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** FN-DSA, HQC, and Classic McEliece extend the portfolio—none replace day-one ML-KEM/ML-DSA deployment.
 
-If you only act on one idea from Chapter 14, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Reserve diversity algorithms for second-wave migration after core FIPS rollout.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

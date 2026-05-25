@@ -1,5 +1,7 @@
 # Author Voice Pass — Changelog
 
+> **2026-05-25 correction:** First automated pass was **insufficient** (see `EXPERT-TECHNICAL-REVIEW.md`). `fix_manuscript_errors.py` removed bogus §N.99 sections, generic TLS notes, and fixed Figure 1.2 placement. **Full body rewrite still required.**
+
 Applied to all **22 chapters** + **4 appendices** (2026-05-25).
 
 ## Every chapter now includes

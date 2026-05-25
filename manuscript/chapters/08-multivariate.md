@@ -12,8 +12,6 @@ flowchart LR
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 8.1 The Multivariate Quadratic Problem
 
 Multivariate cryptography stands apart from other post-quantum families by drawing its hardness not from geometric lattice problems or error-correcting codes, but from the algebraic difficulty of solving systems of polynomial equations over finite fields. The fundamental problem underpinning this entire family—the Multivariate Quadratic (MQ) problem—has been studied in computational algebra for decades and possesses strong theoretical complexity guarantees that persist even in the presence of quantum computers.
@@ -711,13 +709,14 @@ Several fundamental questions remain open in multivariate cryptography:
 - **Is there a provably secure multivariate scheme?** Current security arguments rely on concrete hardness assumptions rather than worst-case-to-average-case reductions. Can we prove that breaking a specific multivariate scheme is as hard as solving worst-case MQ?
 - **What is the true quantum complexity of MinRank?** MinRank underlies the security of UOV, MAYO, and most other multivariate schemes. Its quantum complexity is not well-understood beyond the generic Grover speedup.
 - **Can multivariate encryption be made practical?** Decades of attempts have failed to produce a practical multivariate encryption scheme. Is this a fundamental limitation or merely a gap in current techniques?
-- **How far can key compression go?** Is there a fundamental limit to how small multivariate public keys can be made without compromising security, or will continued innovation eventually match lattice-based key sizes?
----
+- **How far can key compression go?** Is there a fundamental limit to how small multivariate public keys can be made without compromising security, or will continued innovation eventually match lattice-based key sizes?---
 
-## 8.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** MQ hardness is strong in theory; structured traps (Rainbow layers) created practical breaks.
 
-If you only act on one idea from Chapter 8, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Treat NIST additional-signature candidates as evolving—monitor cryptanalysis releases.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

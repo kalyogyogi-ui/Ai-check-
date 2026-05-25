@@ -13,8 +13,6 @@ flowchart TD
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 22.1 The Evolving Landscape
 
 Post-quantum cryptography is not a static field that concluded with the publication of FIPS 203, 204, and 205 in August 2024. Those standards represent a critical milestone — the transition from research to deployment — but they are emphatically a beginning rather than an end. Significant research challenges remain across nearly every dimension of cryptographic science, and the solutions to these challenges will shape the security landscape for decades to come.
@@ -598,13 +596,14 @@ Several domains offer research opportunities with limited current attention:
 - **Cultural and economic barriers to PQC adoption:** Technical solutions exist, but why is adoption slow? Research into incentive design, organizational behavior, and policy mechanisms could accelerate real-world migration.
 - **Post-quantum secure time-stamping:** Long-lived time stamps (for legal documents, intellectual property) must use quantum-safe signatures. Existing time-stamping authorities need transition strategies.
 
----
----
+------
 
-## 22.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** FIPS 203–205 are generation one; FHE, ZK, and leaner signatures remain research-to-product pipelines.
 
-If you only act on one idea from Chapter 22, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Build agility so future algorithm drops do not repeat today's migration pain.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

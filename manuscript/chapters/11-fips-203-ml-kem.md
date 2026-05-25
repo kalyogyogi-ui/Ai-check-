@@ -2,20 +2,32 @@
 
 We walk ML-KEM the way implementers need: **K-PKE, FO transform, implicit rejection**—with constant-time warnings baked in.
 
-**Figure 11.1 — ML-KEM encaps/decaps**
+**Figure 11.1 — ML-KEM-768 object sizes (typical deployment)**
+
+| Object | Bytes (ML-KEM-768) | Role |
+|--------|-------------------:|------|
+| Public key `ek` | 1,184 | Long-lived; in cert extensions / config |
+| Secret key `dk` | 2,400 | HSM-protected; never logged |
+| Ciphertext `c` | 1,088 | Per-handshake on the wire |
+| Shared secret | 32 | Feeds HKDF → AES-GCM |
 
 ```mermaid
 sequenceDiagram
-  participant A as Sender
-  participant B as Receiver
-  A->>B: ciphertext c
-  Note over A,B: K = KDF(m) or KDF(z) on failure
-  B->>B: Re-encrypt check FO
+  participant S as Sender encaps
+  participant R as Receiver decaps
+  S->>R: ciphertext c (1088 B)
+  R->>R: m' from v - s^T u
+  R->>R: re-encrypt FO check
+  alt valid c
+    R-->>S: KDF(K', H(c))
+  else invalid c
+    R-->>S: KDF(z, H(c)) implicit reject
+  end
 ```
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
+> **Author's note:** Implement ML-KEM from **FIPS 203 PDF + ACVP test vectors**, not from memory of the Kyber submission. Parameter sets (512/768/1024) are not interchangeable—your TLS profile must name the exact set.
 
 ## 11.1 Overview
 
@@ -625,13 +637,14 @@ Organizations deploying ML-KEM should consider:
 
 **Plan for algorithm agility.** Design systems so that the KEM algorithm can be changed without major refactoring. This protects against both advances in cryptanalysis (requiring parameter or algorithm changes) and future standardization of additional algorithms (HQC, potential improvements).
 
-**Compliance considerations.** For organizations subject to FIPS requirements, ML-KEM implementations must be validated through the CMVP (Cryptographic Module Validation Program). This process adds time beyond initial deployment; plan accordingly.
----
+**Compliance considerations.** For organizations subject to FIPS requirements, ML-KEM implementations must be validated through the CMVP (Cryptographic Module Validation Program). This process adds time beyond initial deployment; plan accordingly.---
 
-## 11.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** ML-KEM is IND-CCA2 via FO transform with implicit rejection—test invalid ciphertext paths.
 
-If you only act on one idea from Chapter 11, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Use ACVP/KAT vectors; document whether you expose decapsulation oracles in your API.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

@@ -13,8 +13,6 @@ flowchart LR
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 2.1 Classical vs. Quantum Computation
 
 To understand why quantum computers pose an existential threat to much of modern cryptography, we must first develop a rigorous understanding of how quantum computation differs from classical computation at the most fundamental level. The distinction is not merely one of speed — quantum computers operate according to entirely different physical principles, enabling qualitatively new forms of information processing.
@@ -661,13 +659,14 @@ The existence of quantum speedups for factoring and discrete logarithms does NOT
 3. **Proven hardness results:** For some post-quantum constructions (particularly hash-based signatures), security can be reduced to well-understood minimal assumptions.
 4. **Extensive cryptanalysis:** Decades of quantum algorithm research have failed to find efficient quantum algorithms for the problems underlying post-quantum candidates.
 
-The fundamental insight is that quantum speedups require exploitable mathematical structure. The periodic structure in modular exponentiation enables Shor's algorithm; the symmetric structure in unstructured search enables Grover's algorithm. Problems without such structure — such as finding short vectors in high-dimensional lattices — appear to resist quantum speedup, making them suitable foundations for post-quantum cryptography.
----
+The fundamental insight is that quantum speedups require exploitable mathematical structure. The periodic structure in modular exponentiation enables Shor's algorithm; the symmetric structure in unstructured search enables Grover's algorithm. Problems without such structure — such as finding short vectors in high-dimensional lattices — appear to resist quantum speedup, making them suitable foundations for post-quantum cryptography.---
 
-## 2.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Quantum advantage is structural (superposition, interference), not 'infinitely fast classical cores.'
 
-If you only act on one idea from Chapter 2, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Brief leadership on CRQC uses logical qubits and error correction overhead, not marketing qubit counts.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

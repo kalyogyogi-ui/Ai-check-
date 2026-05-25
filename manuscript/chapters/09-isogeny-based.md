@@ -13,8 +13,6 @@ flowchart TD
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 9.1 Elliptic Curves and Isogenies
 
 Isogeny-based cryptography occupies a unique position in the post-quantum landscape. While lattice and code-based schemes dominate standardization efforts, isogeny-based constructions offer unmatched compactness—public keys and signatures measured in tens of bytes rather than kilobytes. This chapter traces the mathematical foundations, the dramatic rise and fall of SIDH/SIKE, the surviving constructions, and the current state of this rapidly evolving field.
@@ -698,13 +696,14 @@ Isogeny-based cryptography is the youngest of the major PQC families, and its th
 | Unique capabilities | NIKE, compact sizes | General purpose | Large ciphertext encryption | Minimal assumptions |
 | Main limitation | Speed, maturity | Key/signature size | Ciphertext size | Signature size, speed |
 
-This table underscores the fundamental trade-off: isogeny-based cryptography offers unique properties (extreme compactness, NIKE capability) that no other family matches, but at the cost of computational expense and less mature security understanding. The field's value lies precisely in this complementarity—it provides capabilities that other families cannot, while the other families provide the robustness and performance that isogenies currently lack.
----
+This table underscores the fundamental trade-off: isogeny-based cryptography offers unique properties (extreme compactness, NIKE capability) that no other family matches, but at the cost of computational expense and less mature security understanding. The field's value lies precisely in this complementarity—it provides capabilities that other families cannot, while the other families provide the robustness and performance that isogenies currently lack.---
 
-## 9.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** SIDH failed because published torsion points enabled polynomial-time recovery; CSIDH/SQISign remain research-grade for production.
 
-If you only act on one idea from Chapter 9, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Do not plan production on isogeny KEX until standards and mature libraries exist.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

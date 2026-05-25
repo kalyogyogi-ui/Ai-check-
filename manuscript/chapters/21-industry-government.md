@@ -21,7 +21,7 @@ Governments worldwide have recognized that the quantum threat to cryptographic i
 
 ### United States
 
-The United States has taken the most comprehensive governmental approach to PQC readiness, with multiple agencies issuing directives, standards, and guidance that collectively create binding timelines for the federal government and strong signals for the private sector.
+The United States has taken the most coordinated federal approach to PQC readiness, with multiple agencies issuing directives, standards, and guidance that collectively create binding timelines for the federal government and strong signals for the private sector.
 
 **National Security Memorandum 10 (NSM-10, May 2022):**
 
@@ -765,13 +765,14 @@ Organizations are funding PQC migration through several approaches:
 - **Technology refresh bundling:** Including PQC migration activities in already-planned technology refresh projects (server upgrades, cloud migration, application modernization). Reduces incremental cost perception.
 - **Regulatory compliance funding:** For regulated sectors, PQC migration costs can be positioned as compliance investments with predictable regulatory return.
 - **Risk reduction investment:** Presenting PQC migration as a risk reduction investment to CFO/Board audiences, using quantified risk reduction metrics.
-- **Phased investment:** Multi-year budgeting that spreads investment across fiscal years, beginning with inventory/assessment (Year 1), pilot migrations (Year 2-3), and broad deployment (Year 4-6).
----
+- **Phased investment:** Multi-year budgeting that spreads investment across fiscal years, beginning with inventory/assessment (Year 1), pilot migrations (Year 2-3), and broad deployment (Year 4-6).---
 
-## 21.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Policy sets deadlines; engineering determines feasibility—map both for your jurisdiction.
 
-If you only act on one idea from Chapter 21, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Indian teams should track NIST FIPS and domestic initiatives (NQM, NCIIPC, RBI) in parallel.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

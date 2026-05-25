@@ -507,13 +507,14 @@ The path away from cryptographic apocalypse requires coordinated action across t
 - Retire all classical-only public-key cryptography from production systems
 - Complete migration of legacy systems and embedded devices
 - Establish post-quantum cryptographic monitoring and agility frameworks
-- Prepare for potential algorithm transitions if new attacks emerge
----
+- Prepare for potential algorithm transitions if new attacks emerge---
 
-## 3.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Shor targets RSA, finite-field DH/DSA, and ECDLP; Grover halves effective symmetric key strength.
 
-If you only act on one idea from Chapter 3, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Prioritize replacing Shor-vulnerable primitives in protocols that protect long-retention data.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

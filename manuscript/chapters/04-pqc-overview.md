@@ -15,8 +15,6 @@ flowchart LR
 
 ---
 
-> **Author's note:** When in doubt, **pilot hybrid TLS** on internal services first; external customer impact is where rollback plans matter.
-
 ## 4.1 Design Principles of Post-Quantum Algorithms
 
 The construction of post-quantum cryptographic algorithms is guided by a set of interrelated design principles that balance theoretical rigor with engineering pragmatism. Understanding these principles is essential for evaluating and selecting PQC schemes.
@@ -595,13 +593,14 @@ Despite the maturation of PQC standards, numerous fundamental and applied resear
 
 **Post-quantum anonymous credentials and privacy:** Building privacy-preserving identity systems (anonymous credentials, group signatures, ring signatures, blind signatures) from post-quantum assumptions is crucial for maintaining privacy in a quantum-computing era. Lattice-based group signatures exist but produce large signatures; making these practical for real-world anonymous authentication remains open.
 
-**Verifiable computation and blockchain:** As blockchains and verifiable computation platforms transition to post-quantum security, the efficiency of PQ proof systems becomes critical. PQ-SNARKs that are succinct enough for blockchain verification while relying only on post-quantum assumptions (rather than pairing-based constructions) are under intensive development.
----
+**Verifiable computation and blockchain:** As blockchains and verifiable computation platforms transition to post-quantum security, the efficiency of PQ proof systems becomes critical. PQ-SNARKs that are succinct enough for blockchain verification while relying only on post-quantum assumptions (rather than pairing-based constructions) are under intensive development.---
 
-## 4.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Lattice schemes are the default deployment path; hash, code, multivariate, and isogeny families fill diversity niches.
 
-If you only act on one idea from Chapter 4, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Pick algorithms by assumption diversity, bytes on the wire, and library maturity—not family politics.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---

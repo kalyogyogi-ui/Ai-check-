@@ -26,13 +26,15 @@ We begin with the societal layer because boards fund **risk stories**, not polyn
 
 ## 1.1 The Role of Cryptography in Modern Society
 
-Cryptography is the invisible foundation upon which our entire digital civilization is built. It operates silently in the background of nearly every digital interaction we undertake, from the mundane act of checking email to the critical operations of transferring millions of dollars between financial institutions. Without cryptography, the internet as we know it — with its e-commerce, online banking, private communications, and digital identities — simply could not exist. The trust we place in digital systems is ultimately trust in the mathematical hardness of certain computational problems.
+If you run security for a bank, a telco, or a government technology unit in India, you already live inside cryptography whether or not you employ cryptographers. Every `https` session, every software update signature, every VPN into a data centre, and every API token that gates a microservice assumes someone chose algorithms, key lengths, and rotation policies that still look sane five years from now. Our job in this chapter is to name what those choices are today—and which of them quantum computers eventually void.
 
-Every time you open a web browser and navigate to a website whose address begins with "https," your computer establishes a Transport Layer Security (TLS) connection with the web server. This process involves a cryptographic handshake where the server proves its identity through a digital certificate, both parties agree on shared encryption keys through a key exchange protocol, and all subsequent communication is encrypted and authenticated. This happens billions of times per day across the global internet, with users rarely aware of the complex mathematical machinery working on their behalf.
+**Figure 1.1 (above)** is the map we reuse in architecture reviews: Shor's algorithm does not "weaken" RSA or elliptic-curve Diffie–Hellman—it removes the confidentiality and authentication guarantees those primitives were designed to provide, once a cryptographically relevant quantum computer (CRQC) exists. Grover's algorithm is different: it shrinks the effective strength of symmetric keys and hashes, which we answer by doubling key sizes, not by replacing AES.
 
-The scale of cryptographic deployment is enormous. Consider that on any given day, there are approximately 4.5 billion active internet users generating hundreds of billions of encrypted connections. Financial institutions process trillions of dollars in transactions secured by public-key cryptography. Governments communicate classified information through encrypted channels. Healthcare systems protect patient records with cryptographic access controls. Military systems rely on encryption for command and control. The supply chains of global commerce depend on digital signatures to verify the authenticity and integrity of software updates, firmware, and communications.
+When you open a site over TLS 1.3, the visible lock icon hides a negotiation most teams never instrument: the server authenticates with a certificate (today, usually RSA or ECDSA), the session keys are derived from a key exchange (today, often X25519 or P-256 ECDH), and only then does AES-GCM or ChaCha20-Poly1305 protect bulk data. In Indian payment and identity ecosystems, the same pattern appears inside API gateways, hardware security modules, and legacy middleware that still terminates TLS on RSA-2048. None of that is invisible to a patient recorder of ciphertext.
 
-The dependency on cryptography extends far beyond what most people realize. Every software update your phone downloads is verified by a digital signature. Every credit card transaction uses cryptographic authentication. Every VPN connection relies on key exchange and encryption. Every time you unlock your phone with a fingerprint, cryptographic protocols authenticate the biometric data. Electronic voting systems, smart grids, autonomous vehicles, blockchain networks, medical implants, satellite communications — all depend fundamentally on cryptographic security.
+> **Author's note:** In discovery workshops we ask for three exports first: (1) TLS cipher suite scan of production endpoints, (2) code-signing and firmware-signing algorithms, (3) data-classification labels with **retention years**. Without those, PQC debates stay abstract.
+
+The deployment scale is hard to overstate, but precise user counts matter less than **where keys live**. A single Kubernetes cluster may mount RSA TLS certificates from a commercial CA, use ECDSA image signatures, and call an HSM that still wraps keys with algorithms NIST now labels quantum-vulnerable. That stacking—not global internet statistics—is what makes migration a systems problem.
 
 Modern public-key cryptography — the foundation of all these systems — relies on a remarkably small number of mathematical hard problems. Essentially, the security of the entire digital economy rests on the belief that three types of mathematical problems are computationally intractable for classical computers:
 
@@ -43,18 +45,6 @@ Modern public-key cryptography — the foundation of all these systems — relie
 **The Elliptic Curve Discrete Logarithm Problem (ECDLP):** Elliptic Curve Cryptography (ECC), introduced independently by Neal Koblitz and Victor Miller in 1985, operates over the group of rational points on an elliptic curve defined over a finite field. Given two points P and Q = kP on an elliptic curve (where kP means adding P to itself k times using the elliptic curve group law), finding the scalar k is the ECDLP. Unlike DLP in finite fields, no sub-exponential classical algorithm is known for ECDLP on properly chosen curves; the best classical attack is Pollard's rho algorithm with running time O(√n) where n is the group order. This fundamental advantage allows ECC to achieve equivalent security to RSA with dramatically smaller key sizes (a 256-bit ECC key provides security comparable to a 3072-bit RSA key), making ECC the preferred algorithm for mobile devices, IoT, and bandwidth-constrained applications.
 
 These three problems have withstood decades of intense scrutiny from the world's best mathematicians and computer scientists. The mathematical community has developed deep confidence in their hardness on classical computers through half a century of cryptanalytic effort. This confidence underpins the entire global digital infrastructure. However, this confidence has a critical caveat: it applies only to classical computation. The advent of quantum computing threatens to fundamentally and irreversibly alter this landscape.
-
-
-**Figure 1.2 — HNDL timeline (author view)**
-
-```mermaid
-sequenceDiagram
-  participant Attacker
-  participant Network
-  Attacker->>Network: Record ciphertext today
-  Note over Attacker: Store years
-  Attacker->>Attacker: Decrypt when CRQC exists
-```
 
 ## 1.2 A Brief History of Public-Key Cryptography
 
@@ -119,6 +109,19 @@ Despite these formidable engineering hurdles, the trajectory is clear. Error rat
 > **Author's note:** HNDL is the budget unlocker—archived TLS matters for years.
 
 > **Author's note:** HNDL is the budget unlocker—archived TLS still matters years later.
+
+
+
+**Figure 1.2 — HNDL timeline (author view)**
+
+```mermaid
+sequenceDiagram
+  participant Attacker
+  participant Network
+  Attacker->>Network: Record ciphertext today
+  Note over Attacker: Store years
+  Attacker->>Attacker: Decrypt when CRQC exists
+```
 
 ## 1.4 The "Harvest Now, Decrypt Later" Threat
 
@@ -349,13 +352,14 @@ We structured this text as a layered reference that serves multiple audiences. I
 
 **Part IV: Implementation (Chapters 15-18)** covers hybrid schemes, side-channel resistance, performance analysis, and protocol integration.
 
-**Part V: Migration (Chapters 19-22)** addresses strategic planning, CBOM, government/industry initiatives, and future research.
----
+**Part V: Migration (Chapters 19-22)** addresses strategic planning, CBOM, government/industry initiatives, and future research.---
 
-## 1.99 Author's Closing Perspective
+## Chapter Summary
 
-We have used this chapter in live architecture reviews: the question is never "is the math beautiful?" but **"what do we deploy Monday, with what fallback?"** Keep a written record of assumptions (hybrid on/off, parameter sets, library versions) so auditors—and future you—know why choices were made.
+**Technical takeaway:** Public-key trust rests on problems Shor breaks; symmetric algorithms need strength bumps, not full replacement.
 
-If you only act on one idea from Chapter 1, make it the figure at the top: turn it into a checklist for your environment.
+**Deployment takeaway:** Start inventory and hybrid KEX for long-lived data; do not wait for a public CRQC milestone.
+
+*Figures in this chapter are planning aids—verify all algorithm names and byte sizes against the current NIST FIPS PDF before implementation.*
 
 ---
