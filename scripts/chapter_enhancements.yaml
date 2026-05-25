@@ -1,0 +1,151 @@
+# Per-chapter author voice enhancements (opener/closer are multiline strings in .py companion)
+
+01-introduction:
+  notes:
+    - anchor: "## 1.4"
+      text: |
+        > **Author's note:** In RBI-regulated and critical-infrastructure workshops, HNDL is what unlocks budget—not fear of qubits tomorrow, but **TLS archives from years ago** that may still matter. Price storage cheaply; price exposure dearly.
+    - anchor: "## 1.7"
+      text: |
+        > **Author's note:** Indian migrations stumble on **vendor roadmaps**, not math. Maintain a living inventory (see Chapter 20) before you debate ML-KEM-768 vs 1024.
+  figures:
+    - anchor: "## 1.6"
+      caption: "Figure 1.1 — Layers impacted by quantum attacks"
+      mermaid: |
+        flowchart TB
+          apps[Apps: UPI APIs ERP] --> tls[TLS SSH IPsec]
+          tls --> pqc_vuln[RSA ECDH ECDSA — Shor]
+          tls --> sym[AES SHA — Grover halves margin]
+    - anchor: "## 1.5"
+      caption: "Figure 1.2 — Mosca inequality (risk lens)"
+      mermaid: |
+        flowchart LR
+          x[x: data must stay secret] --> sum{ x + y > z ? }
+          y[y: migration years] --> sum
+          z[z: CRQC timeline] --> sum
+          sum -->|yes| risk[Already at risk]
+
+02-quantum-computing-fundamentals:
+  notes:
+    - anchor: "## 2.1"
+      text: |
+        > **Author's note:** Executives do not need to simulate Schrödinger's cat. They need to know **why interference enables period finding** and why that breaks RSA. Stop when you can explain that in one slide.
+  figures:
+    - anchor: "## 2.2"
+      caption: "Figure 2.1 — Classical bit vs qubit (conceptual)"
+      mermaid: |
+        flowchart LR
+          c0[Classical bit: 0 OR 1] --> c1[One state at a time]
+          q0[Qubit: superposition] --> q1[alpha|0> + beta|1>]
+          q1 --> q2[Measure -> 0 or 1 probabilistic]
+
+03-quantum-attacks:
+  notes:
+    - anchor: "## 3.2"
+      text: |
+        > **Author's note:** When we threat-model, we treat Shor as **binary**: either your public key is in the Shor family or it is not. Do not waste time on "maybe 2048-bit RSA is fine."
+  figures:
+    - anchor: "## 3.3"
+      caption: "Figure 3.1 — Shor pipeline (simplified)"
+      mermaid: |
+        flowchart LR
+          A[Factor DLP ECDLP] --> B[Period finding]
+          B --> C[Quantum Fourier transform]
+          C --> D[Classical post-process]
+          D --> E[Break RSA DH ECC]
+
+04-pqc-overview:
+  notes:
+    - anchor: "## 4.2"
+      text: |
+        > **Author's note:** We standardize on **ML-KEM + ML-DSA** for default greenfield work, then add **SLH-DSA or Classic McEliece** where policy demands diversity—not because lattices are shaky, but because monocultures fail silently until they fail loudly.
+  figures:
+    - anchor: "## 4.3"
+      caption: "Figure 4.1 — PQC family selection map"
+      mermaid: |
+        flowchart TD
+          need{Primary need?}
+          need -->|KEM / TLS| kem[Lattice ML-KEM or code HQC]
+          need -->|General signature| sig[ML-DSA]
+          need -->|Minimal assumptions| hash[SLH-DSA]
+          need -->|Tiny sig experimental| iso[SQISign — research only]
+
+05-lattice-based:
+  notes:
+    - anchor: "## 5.1"
+      text: |
+        > **Author's note:** If Module-LWE feels abstract, remember the deployment artifact: **polynomial rings, NTT, noise**. Implementation teams care about those three words.
+  figures:
+    - anchor: "## 5.1"
+      caption: "Figure 5.1 — Lattice intuition (2D)"
+      ascii: |
+        ```
+        Bad basis (long, skewed)          Good basis (short, nearly orthogonal)
+        ·  ·  ·  ·                        · · · ·
+          ·  ·  ·  ·                        · · · ·
+        Short vector hard to see          Short vector obvious
+        ```
+
+10-nist-standardization:
+  notes:
+    - anchor: "## 10.2"
+      text: |
+        > **Author's note:** SIKE's 2022 break is the lesson we cite to boards: **years of review, then one weekend on a laptop**. That is why we still recommend hybrids during transition.
+  figures:
+    - anchor: "## 10.2"
+      caption: "Figure 10.1 — NIST PQC timeline (simplified)"
+      mermaid: |
+        timeline
+          title NIST PQC (selected milestones)
+          2016 : Call for proposals
+          2022 : Rainbow and SIKE breaks
+          2024 : FIPS 203 204 205 published
+          2025+ : FN-DSA HQC tracks
+
+15-hybrid-schemes:
+  notes:
+    - anchor: "## 15.1"
+      text: |
+        > **Author's note:** For Indian SaaS on mobile networks, hybrid handshakes are a **bandwidth negotiation** first and a math debate second. Measure on your POPs, not on paper.
+  figures:
+    - anchor: "## 15.2"
+      caption: "Figure 15.1 — Hybrid TLS KEX architecture"
+      mermaid: |
+        sequenceDiagram
+          participant C as Client
+          participant S as Server
+          C->>S: ClientHello + hybrid key_share
+          S->>C: ServerHello + shares
+          Note over C,S: ss = HKDF(classical_ss || mlkem_ss)
+          C->>S: Finished (derived from ss)
+
+19-migration-strategies:
+  notes:
+    - anchor: "## 19.2"
+      text: |
+        > **Author's note:** Cryptographic agility is not a Jira ticket; it is **who can change cipher suites without a full redeploy**. If only one team can, you are not agile.
+  figures:
+    - anchor: "## 19.1"
+      caption: "Figure 19.1 — Migration phases"
+      mermaid: |
+        flowchart LR
+          P1[Discover CBOM] --> P2[Prioritize HNDL]
+          P2 --> P3[Pilot hybrid TLS]
+          P3 --> P4[Scale + attest]
+          P4 --> P5[Retire classical PK]
+
+21-industry-government:
+  notes:
+    - anchor: "**India (NCIIPC"
+      text: |
+        > **Author's note:** India's story is not a footnote. National Quantum Mission funding, NCIIPC sector guidance, RBI's operational risk lens on payment rails, and STQC's testing culture should shape **your** roadmap before you copy CNSA 2.0 dates verbatim. Verify each policy against the latest MeitY/RBI circular—we quote public initiatives, not rumors.
+  figures:
+    - anchor: "## 21.1"
+      caption: "Figure 21.1 — India PQC stakeholder map (author view)"
+      mermaid: |
+        flowchart TB
+          MeitY[MeitY / NQM policy] --> Sectors[CERT-In sectors]
+          RBI[RBI / payment systems] --> Banks[Banks NBFCs]
+          NCIIPC[NCIIPC CII guidance] --> CII[Critical infrastructure]
+          STQC[STQC testing] --> Vendors[Product vendors]
+          Academia[IIT ISI IISc] --> NIST_eval[Global analysis]
