@@ -1,6 +1,6 @@
 # Fact-Check Manifest
 
-*Pre-publication verification log for Tokenomics in the Quantum Age. Status: **OPEN** — verifier must mark each row before print.*
+*Pre-publication verification log for Tokenomics in the Quantum Age. Status: **IN PROGRESS** — automated pass 2026-05-30 — verifier must mark each row before print.*
 
 | ID | Claim (paraphrase) | Location | Source required | Status |
 |----|-------------------|----------|-----------------|--------|
@@ -33,3 +33,11 @@
 | Cryptography | | | |
 | Protocol economics | | | |
 | Legal / policy | | | |
+
+
+## Implementation notes (2026-05-30)
+
+- Manuscript now labels (Data), (Estimate), (Scenario) in front matter.
+- Footnotes [^1]–[^6] added before Glossary; map to claims in Preface / Ch. 5–6 / Ch. 11.
+- `tools/qri_stress_model.csv` provides reproducible SCR scaffolding.
+- **Human verifier must still** confirm each F01–F15 row before print.

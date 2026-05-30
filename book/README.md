@@ -1,49 +1,47 @@
 # Tokenomics in the Quantum Age — Manuscript Package
 
-Revised manuscript implementing the forensic publishing audit (May 2026).
+**Edition:** Audit implementation complete (2026-05-30)
 
-## Main file
+## Primary file
 
-- **`Tokenomics_in_the_Quantum_Age_Complete_Book.md`** — full book (~150k words) with audit improvements applied
+[`Tokenomics_in_the_Quantum_Age_Complete_Book.md`](Tokenomics_in_the_Quantum_Age_Complete_Book.md) (~153k words)
 
 ## Supporting files
 
 | File | Purpose |
 |------|---------|
-| `ART_BRIEF.md` | Figure production notes (removed from reader body) |
-| `FACT_CHECK_MANIFEST.md` | Pre-print verification checklist |
-| `scripts/apply_audit_improvements.py` | TOC, disclaimers, timelines, exec summaries |
-| `scripts/insert_supplements.py` | Cases, exercises, appendices, worked example |
-| `supplements/` | Source fragments for inserts |
+| [`ART_BRIEF.md`](ART_BRIEF.md) | Print-figure production specs |
+| [`FACT_CHECK_MANIFEST.md`](FACT_CHECK_MANIFEST.md) | Pre-print verification checklist |
+| [`tools/qri_stress_model.csv`](tools/qri_stress_model.csv) | SCR / stress parameters |
+| [`tools/README.md`](tools/README.md) | How to use the CSV model |
 
-## What was implemented
+## Implemented (full audit pass)
 
-1. Table of Contents, List of Figures, List of Tables  
-2. Legal disclaimer and evidence-labeling convention  
-3. Competitive comparison table (Preface)  
-4. Master Timeline Reference (Ch. 5) and Ch. 13 cross-reference  
-5. Renamed duplicate heading → *Preview: The Cryptoeconomic Substrate*  
-6. **Chapter at a Glance** action summary per chapter (16)  
-7. Worked SCR example + Cases 4–6 (Lido, bridge, MakerDAO)  
-8. Expanded Appendix B (QEE template) and Appendix C (migration checklist)  
-9. **Appendix E** — chapter exercises with solution sketches  
-10. Mermaid diagrams for Figures 1.1 and 2.1 (GitHub/digital compatible)  
-11. Fixed `TBD` in Table 5.2; placement notes moved to `ART_BRIEF.md`  
-12. Fact-check manifest for publisher verification pass  
+- Executive Summary + About This Book (no draft/audit meta in body)
+- Detailed TOC + Print TOC + LOF/LOT
+- Legal disclaimer; (Data) / (Estimate) / (Scenario) labels
+- Competitive comparison table (Preface)
+- Master Timeline (Ch. 5) + Ch. 13 cross-reference
+- Preview: Cryptoeconomic Substrate (duplicate heading fix)
+- Chapter at a Glance × 16
+- Chapter Exercises × 16 (Appendix E for solutions)
+- Worked SCR example; Cases 1–9
+- Mermaid figures 1.1, 1.2, 2.1, 4.1, 5.1, 6.1
+- Expanded Appendices B, C; new F (RACI), G (EMC budgets)
+- Footnotes [^1]–[^6]; reviewer table in Acknowledgments
+- Em-dash reduction (~34%); placement notes in ART_BRIEF only
 
-## Regenerate
+## Regenerate safely
 
 ```bash
 cd book
-cp ../Tokenomics_in_the_Quantum_Age_Complete_Book.md.orig Tokenomics_in_the_Quantum_Age_Complete_Book.md  # if you keep a backup
-python3 scripts/apply_audit_improvements.py
-python3 scripts/insert_supplements.py
+cp Tokenomics_in_the_Quantum_Age_Complete_Book.md.bak Tokenomics_in_the_Quantum_Age_Complete_Book.md
+python3 scripts/repair_manuscript.py
 ```
 
-## Still required before print
+## Still human-required before print
 
-- Commission final figures from `ART_BRIEF.md`  
-- Complete every row in `FACT_CHECK_MANIFEST.md`  
-- Professional copyedit (sentence length, em-dash density)  
-- Legal review of regulatory claims  
-- ISBN / copyright / CIP pages  
+1. Commission print figures from `ART_BRIEF.md`
+2. Complete `FACT_CHECK_MANIFEST.md`
+3. Assign named reviewers in Acknowledgments
+4. Professional copyedit pass
