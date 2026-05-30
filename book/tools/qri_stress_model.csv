@@ -1,0 +1,17 @@
+parameter,description,example_value,unit,notes
+legacy_sig_bytes,ECDSA/Ed25519 payload per tx,100,bytes,Planning round number
+pqc_sig_bytes,ML-DSA-44 class payload,2420,bytes,NIST FIPS 204
+scr,Signature cost ratio,pqc_sig_bytes/legacy_sig_bytes,ratio,Or include witness overhead; use 37 for conservative L1
+block_weight_budget,Bitcoin-style weight cap,4000000,WU,
+legacy_tx_weight,Average tx weight,400,WU,
+pqc_tx_weight,legacy_tx_weight*scr,WU,Estimate
+throughput_ratio,block_weight_budget/pqc_tx_weight/block_weight_budget*legacy_tx_weight,ratio,Illustrative
+daily_tx_demand,Transactions per day,300000,count,
+fee_legacy_usd,Median fee pre-PQC,2,USD,Estimate
+fee_stress_multiplier,1/throughput_ratio (bounded),10,ratio,Cap in sheet for realism
+tvl_usd,Total value secured,1000000000,USD,
+tvl_at_risk_pct,Percent TVL in exposed keys,30,percent,From QEE
+tvl_at_risk_usd,tvl_usd*tvl_at_risk_pct/100,USD,
+governance_participation_pct,Eligible power voted,8,percent,
+governance_post_pqc_pct,After fee shock,5,percent,Estimate
+scenario,Stress scenario label,B_accelerated,text,Maps to Ch. 11 cases
